@@ -1,27 +1,23 @@
 /// <reference path="phaser.d.ts"/>
-class MyGame {
+/// <reference path="preload/preload.ts"/>
+/// <reference path="level/level.ts"/>
 
-	private game : Phaser.Game;
+module Ld33 {
+	export class MyGame extends Phaser.Game {
 
-	constructor() {
-		this.game = new Phaser.Game(800, 600, Phaser.AUTO, 'content', {preload: this.preload, create: this.create, update : this.update});
-	}
+		constructor() {
+			super(800, 600, Phaser.CANVAS, 'content', undefined, undefined, false);
 
+			this.state.add("preload", Preload.Preload);
+			this.state.add("level", Level.Level);
 
-	preload() {
-		// this.game.load.image('ball', 'assets/ball.png');
-	}
+			this.state.start("preload");
+		}
 
-	create() {
-		this.game.physics.startSystem(Phaser.Physics.ARCADE);
-	}
-
-	update() {
-		// this.game.physics.arcade.collide(this.paddleGroup, this.ballGroup);
 	}
 
 }
 
 window.onload = () => {
-	var game = new MyGame();
+	var game = new Ld33.MyGame();
 };
