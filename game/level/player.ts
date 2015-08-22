@@ -14,13 +14,15 @@ module Ld33.Level {
 
 		private LANE_SWITCHING_SPEED : number = 500;
 		private CANCEL_LANE_SWITCHING_SPEED : number = 250;
-		private ACCELERATION_DRIVE : number = 50;
+		private ACCELERATION_DRIVE : number = 70;
 		private ACCELERATION_BREAK : number = 400;
-		private MAX_DRIVING_SPEED : number = 500;
+		private MAX_DRIVING_SPEED : number = 400;
 		private KNOCKBACK_SPEED : number = 50;
 		private LASER_SPEED : number = 2000;
+		private LASER_FIRE_INTERVAL_IN_MS : number = 100;
 		private CRASH_RAGE_ADD : number = 0.4;
-		private BREAK_RAGE_ADD_PER_S : number = 0.07;
+		private BREAK_RAGE_ADD_PER_S : number = 0.03;
+		private LASER_RAGE_ADD_PER_SHOT : number = 0.02;
 
 		private scaleFactor : number;
 		private lanesX : number[];
@@ -29,6 +31,8 @@ module Ld33.Level {
 		private lane : number = 2;
 		private rageLevel : number = 0;
 		private lasers : Phaser.Group;
+		private lastLaserTimeStamp : number;
+		private rnd : Phaser.RandomDataGenerator;
 		private onDie : () => void;
 		private onKnockBack : () => void;
 
@@ -37,6 +41,8 @@ module Ld33.Level {
 			this.lanesX = lanesX;
 			this.scaleFactor = scaleFactor;
 			this.lasers = lasers;
+			this.lastLaserTimeStamp = 0;
+			this.rnd = new Phaser.RandomDataGenerator([12, 43, 42]);
 			this.lane = 2;
 			this.anchor.set(0.5, 0.5);
 
@@ -82,13 +88,17 @@ module Ld33.Level {
 		}
 
 		shoot() {
-			if (this.state == PlayerState.Driving) {
-				var laser : Phaser.Sprite = this.lasers.create(this.position.x, this.position.y, 'laser');
+			var timeSinceLastShot = this.game.time.now - this.lastLaserTimeStamp;
+			if (this.state == PlayerState.Driving && timeSinceLastShot > this.LASER_FIRE_INTERVAL_IN_MS) {
+				this.lastLaserTimeStamp = this.game.time.now;
+				var laser : Phaser.Sprite = this.lasers.create(this.position.x + this.rnd.between(-this.width / 2, this.width / 2), this.position.y, 'laser');
 				laser.anchor.set(0.5, 0.5);
 				laser.scale.set(this.scaleFactor, this.scaleFactor);
 				this.game.physics.enable(laser, Phaser.Physics.ARCADE);
 				laser.body.enable = true;
 				laser.body.velocity.y = -this.LASER_SPEED;
+
+				this.addRage(this.LASER_RAGE_ADD_PER_SHOT);
 			}
 		}
 
@@ -146,7 +156,7 @@ module Ld33.Level {
 					// Do not drive backwards.
 					this.body.velocity.y = 0;
 				}
-				this.addRage(this.BREAK_RAGE_ADD_PER_S * this.game.time.elapsedMS / 1000);
+				this.addRage(this.BREAK_RAGE_ADD_PER_S * this.game.time.elapsed / 1000);
 			}
 			if (this.state != PlayerState.Dead) {
 			}

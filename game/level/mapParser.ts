@@ -58,14 +58,21 @@ module Ld33.Level {
 			var y = this.game.camera.view.top - 32 * this.scaleFactor;
 			switch (carIndex) {
 				case 1:
-					this.createCar(x, y, 0, 5, this.scaleFactor, 'car1');
+					this.createCar(x, y, 0, 5, 'car1');
+					break;
+				case 2:
+					this.createCar(x, y, 30, 13, 'car2');
+					break;
+				case 3:
+					this.createCar(x, y, 60, 40, 'car3');
 					break;
 			}
 		}
 
-		createCar(x, y, speed, health, scaleFactor, imgName) {
+		createCar(x, y, speed, health, imgName) {
 			var newCar : Phaser.Sprite = this.enemies.create(x, y, imgName);
 			newCar.anchor.set(0.5, 0.5);
+			newCar.health = health;
 			newCar.scale.set(this.scaleFactor, this.scaleFactor);
 			this.game.physics.enable(newCar, Phaser.Physics.ARCADE);
 			newCar.body.enable = true;

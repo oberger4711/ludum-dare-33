@@ -11,11 +11,16 @@ module Ld33.Preload {
 			// Images
 			this.game.load.image('player-car', 'assets/player-car.png');
 			this.game.load.image('car1', 'assets/car1.png');
+			this.game.load.image('car2', 'assets/car2.png');
+			this.game.load.image('car3', 'assets/car3.png');
+
 			this.game.load.image('road', 'assets/road.png');
 			this.game.load.image('laser', 'assets/laser.png');
 
 			// Maps
 			this.game.load.json('lvl0', 'assets/0.json');
+
+			// Sound
 			//this.game.load.audio('music', 'assets/music.mp3');
 		}
 

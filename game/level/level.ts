@@ -91,7 +91,7 @@ module Ld33.Level {
 				this.player.moveRight();
 			}
 
-			if (this.keyShoot.justDown) {
+			if (this.keyShoot.isDown) {
 				this.player.shoot();
 			}
 
