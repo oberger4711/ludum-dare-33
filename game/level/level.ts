@@ -4,7 +4,8 @@
 module Ld33.Level {
 	export class Level extends Phaser.State {
 
-		private SPRITE_WIDTH : number = 16;
+		private ROAD_WIDTH : number = 300;
+		private PLAYER_CAR_Y_OFFSET : number = 100;
 
 		private mapIndex : number;
 		private scaleFactor : number = 1;
@@ -27,8 +28,14 @@ module Ld33.Level {
 		create() {
 			this.game.time.advancedTiming = true; // DEBUG
 			this.camera.roundPx = false;
+			
+			this.road = this.game.add.sprite(this.game.width / 2, this.game.height /2, 'road');
+			this.scaleFactor = this.ROAD_WIDTH / this.road.width;
+			this.road.anchor.set(0.5, 0.5);
+			this.road.scale.set(this.scaleFactor, this.scaleFactor);
 
-			this.player = new Player(this.game, this.game.width / 2, this.game.height - 2 * this.SPRITE_WIDTH * this.scaleFactor);
+			this.player = new Player(this.game, this.game.width / 2, this.game.height - this.PLAYER_CAR_Y_OFFSET);
+			this.player.scale.set(this.scaleFactor, this.scaleFactor);
 			this.game.add.existing(this.player);
 		}
 

@@ -9,6 +9,7 @@ module Ld33.Preload {
 
 		preload() {
 			this.game.load.image('player-car', 'assets/player-car.png');
+			this.game.load.image('road', 'assets/road.png');
 			//this.game.load.audio('music', 'assets/music.mp3');
 		}
 
