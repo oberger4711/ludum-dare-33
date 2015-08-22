@@ -19,6 +19,7 @@ module Ld33.Level {
 		private MAX_DRIVING_SPEED : number = 500;
 		private KNOCKBACK_SPEED : number = 50;
 		private CRASH_RAGE_ADD : number = 0.4;
+		private BREAK_RAGE_ADD_PER_S : number = 0.07;
 
 		private lanesX : number[];
 		
@@ -129,6 +130,7 @@ module Ld33.Level {
 					// Do not drive backwards.
 					this.body.velocity.y = 0;
 				}
+				this.addRage(this.BREAK_RAGE_ADD_PER_S * this.game.time.elapsedMS / 1000);
 			}
 			if (this.state != PlayerState.Dead) {
 			}
