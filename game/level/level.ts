@@ -15,6 +15,9 @@ module Ld33.Level {
 		private road : Phaser.Sprite;
 		private player : Player;
 
+		private keyLeft : Phaser.Key;
+		private keyRight : Phaser.Key;
+
 		constructor() {
 			super();
 		}
@@ -44,16 +47,26 @@ module Ld33.Level {
 			this.game.physics.enable(this.player, Phaser.Physics.ARCADE);
 			this.player.body.enable = true;
 			this.game.add.existing(this.player);
+
+			this.keyLeft = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+			this.keyRight = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
 		}
 
 		calcLaneX(index : number) : number {
-			return this.game.width / 2 + (index - 2) * 24;
+			return this.game.width / 2 + (index - 2) * 24 * this.scaleFactor;
 		}
 
 		update() {
 			this.road.y += this.ROAD_MIN_SCROLL_SPEED;
 			while (this.road.y - (this.road.height / 2) > this.camera.view.top) {
 				this.road.y -= this.road.height / 2;
+			}
+
+			if (this.keyLeft.justDown) {
+				this.player.moveLeft();
+			}
+			else if (this.keyRight.justDown) {
+				this.player.moveRight();
 			}
 		}
 

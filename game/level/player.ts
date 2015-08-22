@@ -8,7 +8,8 @@ module Ld33.Level {
 	};
 	export class Player extends Phaser.Sprite {
 
-		private minDrivingSpeed : number = 300;
+		private LANE_SWITCHING_SPEED : number = 250;
+		private MIN_DRIVING_SPEED : number = 100;
 		private lanesX : number[];
 		
 		private state : PlayerState;
@@ -17,6 +18,7 @@ module Ld33.Level {
 
 		constructor(game, yOffset, lanesX : number[]) {
 			super(game, lanesX[2], yOffset, 'player-car');
+			this.lanesX = lanesX;
 			this.lane = 2;
 			this.anchor.set(0.5, 0.5);
 
@@ -26,16 +28,16 @@ module Ld33.Level {
 		}
 
 		moveRight() {
-			this.moveX(1);
+			if (this.state == PlayerState.Driving && this.lane < this.lanesX.length - 1) {
+				this.body.velocity.x = this.LANE_SWITCHING_SPEED;
+				this.makeStateTransition(PlayerState.SwitchingLane);
+			}
 		}
 
 		moveLeft() {
-			this.moveX(-1);
-		}
-
-		moveX(dirFactor : number) {
-			if (this.state != PlayerState.Dead) {
-				// TODO
+			if (this.state == PlayerState.Driving && this.lane > 0) {
+				this.body.velocity.x = -this.LANE_SWITCHING_SPEED;
+				this.makeStateTransition(PlayerState.SwitchingLane);
 			}
 		}
 
@@ -52,21 +54,48 @@ module Ld33.Level {
 		}
 
 		update() {
+			if (this.state == PlayerState.SwitchingLane) {
+				if (this.body.velocity.x > 0) {
+					if (this.position.x >= this.lanesX[this.lane + 1]) {
+						this.finishSwitching(1);
+					}
+					else if (this.body.blocked.right) {
+						// Switch failed. Hit a car.
+						// TODO
+					}
+				}
+				else if (this.body.velocity.x < 0) {
+					if (this.position.x <= this.lanesX[this.lane - 1]) {
+						this.finishSwitching(-1);
+					}
+					else if (this.body.blocked.left) {
+						// Switch failed. Hit a car.
+						// TODO
+					}
+				}
+			}
 			if (this.state != PlayerState.Dead) {
 			}
+		}
+
+		private finishSwitching(deltaLane : number) {
+			this.position.x = this.lanesX[this.lane + deltaLane];
+			this.body.velocity.x = 0;
+			this.lane += deltaLane;
+			this.makeStateTransition(PlayerState.Driving);
 		}
 
 		makeStateTransition(value : PlayerState) {
 			if (this.state != value) {
 				switch (value) {
 					case PlayerState.Driving:
-						this.animations.play('stand');
+						// TODO
 						break;
 					case PlayerState.SwitchingLane:
-						this.animations.play('jump');
+						// TODO
 						break;
 					case PlayerState.Dead:
-						this.animations.play('die');
+						// TODO
 						break;
 				}
 				this.state = value;
