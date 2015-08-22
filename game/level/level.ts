@@ -35,10 +35,6 @@ module Ld33.Level {
 			this.game.time.advancedTiming = true; // DEBUG
 			this.camera.roundPx = false;
 			
-			var map = this.game.cache.getJSON('lvl' + this.mapIndex);
-			this.mapParser = new MapParser(this.game, this.lanesX, map);
-			this.game.world.setBounds(0, 0, 800, this.mapParser.getMapHeight());
-
 			this.road = this.game.add.sprite(this.game.width / 2, this.game.height / 2, 'road');
 			this.scaleFactor = this.ROAD_WIDTH / this.road.width;
 			this.road.anchor.set(0.5, 0.5);
@@ -47,7 +43,11 @@ module Ld33.Level {
 
 			this.lanesX = [ this.calcLaneX(0), this.calcLaneX(1), this.calcLaneX(2), this.calcLaneX(3), this.calcLaneX(4) ];
 
-			this.player = new Player(this.game, this.mapParser.getMapHeight(), this.lanesX, this.scaleFactor);
+			var map = this.game.cache.getJSON('lvl' + this.mapIndex);
+			this.mapParser = new MapParser(this.game, this.lanesX, this.scaleFactor, map);
+			this.game.world.setBounds(0, 0, 800, this.mapParser.getMapHeight());
+
+			this.player = new Player(this.game, this.mapParser.getMapHeight() - this.PLAYER_CAR_Y_OFFSET, this.lanesX, this.scaleFactor);
 			this.game.add.existing(this.player);
 
 			this.keyLeft = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
