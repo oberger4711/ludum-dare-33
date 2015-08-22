@@ -20,6 +20,7 @@ module Ld33.Level {
 
 		private keyLeft : Phaser.Key;
 		private keyRight : Phaser.Key;
+		private keyBreak : Phaser.Key;
 
 		constructor() {
 			super();
@@ -55,6 +56,7 @@ module Ld33.Level {
 
 			this.keyLeft = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 			this.keyRight = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+			this.keyBreak = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 		}
 
 		private calcLaneX(index : number) : number {
@@ -70,7 +72,12 @@ module Ld33.Level {
 				this.road.y -= this.road.height / 2;
 			}
 
-
+			if (this.keyBreak.isDown) {
+				this.player.moveBreak();
+			}
+			else {
+				this.player.moveDrive();
+			}
 			if (this.keyLeft.justDown) {
 				this.player.moveLeft();
 			}

@@ -3,6 +3,7 @@
 module Ld33.Level {
 	enum PlayerState {
 		Driving,
+		Breaking,
 		SwitchingLaneLeft,
 		SwitchingLaneRight,
 		CancelSwitchingLaneLeft,
@@ -12,7 +13,9 @@ module Ld33.Level {
 	export class Player extends Phaser.Sprite {
 
 		private LANE_SWITCHING_SPEED : number = 500;
-		private ACCELERATION : number = 50;
+		private CANCEL_LANE_SWITCHING_SPEED : number = 250;
+		private ACCELERATION_DRIVE : number = 50;
+		private ACCELERATION_BREAK : number = 400;
 		private MAX_DRIVING_SPEED : number = 500;
 		private KNOCKBACK_SPEED : number = 50;
 		private CRASH_RAGE_ADD : number = 0.4;
@@ -40,7 +43,7 @@ module Ld33.Level {
 			this.game.physics.enable(this, Phaser.Physics.ARCADE);
 			this.body.enable = true;
 			this.body.velocity.y = 0;
-			this.body.acceleration.set(0, -this.ACCELERATION);
+			this.body.acceleration.set(0, -this.ACCELERATION_DRIVE);
 			this.body.maxVelocity.set(this.LANE_SWITCHING_SPEED, this.MAX_DRIVING_SPEED);
 		}
 
@@ -55,6 +58,20 @@ module Ld33.Level {
 			if (this.state == PlayerState.Driving && this.lane > 0) {
 				this.body.velocity.x = -this.LANE_SWITCHING_SPEED;
 				this.makeStateTransition(PlayerState.SwitchingLaneLeft);
+			}
+		}
+
+		moveBreak() {
+			if (this.state == PlayerState.Driving) {
+				this.body.acceleration.y = this.ACCELERATION_BREAK;
+				this.makeStateTransition(PlayerState.Breaking);
+			}
+		}
+
+		moveDrive() {
+			if (this.state == PlayerState.Breaking) {
+				this.body.acceleration.y = -this.ACCELERATION_DRIVE;
+				this.makeStateTransition(PlayerState.Driving);
 			}
 		}
 
@@ -82,7 +99,7 @@ module Ld33.Level {
 				}
 				else if (this.body.touching.right) {
 					// Switch failed. Hit a car.
-					this.body.velocity.x = -this.LANE_SWITCHING_SPEED;
+					this.body.velocity.x = -this.CANCEL_LANE_SWITCHING_SPEED;
 					this.makeStateTransition(PlayerState.CancelSwitchingLaneRight);
 				}
 			}
@@ -92,7 +109,7 @@ module Ld33.Level {
 				}
 				else if (this.body.touching.left) {
 					// Switch failed. Hit a car.
-					this.body.velocity.x = this.LANE_SWITCHING_SPEED;
+					this.body.velocity.x = this.CANCEL_LANE_SWITCHING_SPEED;
 					this.makeStateTransition(PlayerState.CancelSwitchingLaneLeft);
 				}
 			}
@@ -105,6 +122,12 @@ module Ld33.Level {
 			else if (this.state == PlayerState.CancelSwitchingLaneRight) {
 				if (this.position.x <= this.lanesX[this.lane]) {
 					this.finishSwitching(0);
+				}
+			}
+			else if (this.state == PlayerState.Breaking) {
+				if (this.body.velocity.y > 0) {
+					// Do not drive backwards.
+					this.body.velocity.y = 0;
 				}
 			}
 			if (this.state != PlayerState.Dead) {
@@ -135,9 +158,9 @@ module Ld33.Level {
 			this.rageLevel += value;
 			if (this.rageLevel >= 1) {
 				this.rageLevel = 1;
-				console.log("Rage level : " + this.rageLevel);
 				this.die();
 			}
+			console.log("Rage level : " + this.rageLevel);
 		}
 
 
@@ -147,12 +170,17 @@ module Ld33.Level {
 					case PlayerState.Driving:
 						// TODO
 						break;
+					case PlayerState.Breaking:
+						// TODO
+						break;
 					case PlayerState.SwitchingLaneLeft:
 					case PlayerState.SwitchingLaneRight:
 						// TODO
 						break;
 					case PlayerState.Dead:
 						// TODO
+						break;
+					default:
 						break;
 				}
 				this.state = value;
