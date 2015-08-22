@@ -62,7 +62,7 @@ module Ld33.Level {
 		}
 
 		update() {
-			this.game.physics.arcade.collide(this.player, this.enemies);
+			this.game.physics.arcade.collide(this.player, this.enemies, (c) => this.player.hitCar(c));
 			this.camera.focusOnXY(this.game.width / 2, this.player.position.y - (this.game.height / 2) + this.PLAYER_CAR_Y_OFFSET);
 
 			this.road.y += this.ROAD_MIN_SCROLL_SPEED;
@@ -71,10 +71,10 @@ module Ld33.Level {
 			}
 
 
-			if (this.keyLeft.isDown) {
+			if (this.keyLeft.justDown) {
 				this.player.moveLeft();
 			}
-			else if (this.keyRight.isDown) {
+			else if (this.keyRight.justDown) {
 				this.player.moveRight();
 			}
 

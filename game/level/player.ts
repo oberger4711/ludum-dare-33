@@ -14,11 +14,16 @@ module Ld33.Level {
 		private LANE_SWITCHING_SPEED : number = 500;
 		private ACCELERATION : number = 50;
 		private MAX_DRIVING_SPEED : number = 500;
+		private KNOCKBACK_SPEED : number = 50;
+		private CRASH_RAGE_ADD : number = 0.4;
+
 		private lanesX : number[];
 		
 		private state : PlayerState;
 		private lane : number = 2;
+		private rageLevel : number = 0;
 		private onDie : () => void;
+		private onKnockBack : () => void;
 
 		constructor(game, yOffset, lanesX : number[], scaleFactor : number) {
 			super(game, lanesX[2], yOffset, 'player-car');
@@ -27,6 +32,7 @@ module Ld33.Level {
 			this.anchor.set(0.5, 0.5);
 
 			//this.animations.add('run', [0, 1, 2, 3, 4, 5, 6, 7, 8], 10, true);
+			this.rageLevel = 0;
 			this.state = PlayerState.Driving;
 			//this.animations.play('stand');
 
@@ -54,11 +60,17 @@ module Ld33.Level {
 
 		die() {
 			if (this.state != PlayerState.Dead) {
-				// TODO
+				this.body.moves = false;
+				this.makeStateTransition(PlayerState.Dead);
+				if (this.onDie) {
+					this.onDie()
+				}
+				console.log("Dead");
 			}
 		}
 
 		restore() {
+			this.body.moves = true;
 			this.makeStateTransition(PlayerState.Driving);
 		}
 
@@ -106,6 +118,29 @@ module Ld33.Level {
 			this.makeStateTransition(PlayerState.Driving);
 		}
 
+		hitCar(car : Phaser.Sprite) {
+			var hitTop = this.body.wasTouching.up != this.body.touching.up;
+			if (hitTop) {
+				// Knockback
+				this.body.velocity.y = this.KNOCKBACK_SPEED;
+			}
+			var hitLeft = this.body.wasTouching.left != this.body.touching.left;
+			var hitRight = this.body.wasTouching.right != this.body.touching.right;
+			if (hitTop || hitLeft || hitRight) {
+				this.addRage(this.CRASH_RAGE_ADD);
+			}
+		}
+
+		addRage(value : number) {
+			this.rageLevel += value;
+			if (this.rageLevel >= 1) {
+				this.rageLevel = 1;
+				console.log("Rage level : " + this.rageLevel);
+				this.die();
+			}
+		}
+
+
 		makeStateTransition(value : PlayerState) {
 			if (this.state != value) {
 				switch (value) {
@@ -130,6 +165,14 @@ module Ld33.Level {
 
 		set OnDie(value : () => void) {
 			this.onDie = value;
+		}
+
+		get OnKnockBack() : () => void {
+			return this.onKnockBack;
+		}
+
+		set OnKnockBack(value : () => void) {
+			this.onKnockBack = value;
 		}
 
 		get IsDead() : boolean {
