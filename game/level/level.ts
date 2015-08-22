@@ -74,8 +74,10 @@ module Ld33.Level {
 				this.player.moveRight();
 			}
 
-			if (!this.mapParser.update()) {
-				console.log("Finished parsing map.");
+			this.mapParser.update();
+
+			if (this.player.bottom < 0) {
+				// Level cleared.
 			}
 		}
 
