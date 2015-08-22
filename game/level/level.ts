@@ -16,11 +16,13 @@ module Ld33.Level {
 		private road : Phaser.Sprite;
 		private player : Player;
 		private enemies : Phaser.Group;
+		private lasers : Phaser.Group;
 		private mapParser : MapParser;
 
 		private keyLeft : Phaser.Key;
 		private keyRight : Phaser.Key;
 		private keyBreak : Phaser.Key;
+		private keyShoot : Phaser.Key;
 
 		constructor() {
 			super();
@@ -46,17 +48,19 @@ module Ld33.Level {
 			this.lanesX = [ this.calcLaneX(0), this.calcLaneX(1), this.calcLaneX(2), this.calcLaneX(3), this.calcLaneX(4) ];
 
 			this.enemies = this.game.add.group();
+			this.lasers = this.game.add.group();
 
 			var map = this.game.cache.getJSON('lvl' + this.mapIndex);
 			this.mapParser = new MapParser(this.game, this.enemies, this.lanesX, this.scaleFactor, map);
 			this.game.world.setBounds(0, 0, 800, this.mapParser.getMapHeight());
 
-			this.player = new Player(this.game, this.mapParser.getMapHeight() - this.PLAYER_CAR_Y_OFFSET, this.lanesX, this.scaleFactor);
+			this.player = new Player(this.game, this.mapParser.getMapHeight() - this.PLAYER_CAR_Y_OFFSET, this.lanesX, this.scaleFactor, this.lasers);
 			this.game.add.existing(this.player);
 
 			this.keyLeft = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 			this.keyRight = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-			this.keyBreak = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+			this.keyBreak = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+			this.keyShoot = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 		}
 
 		private calcLaneX(index : number) : number {
@@ -65,6 +69,7 @@ module Ld33.Level {
 
 		update() {
 			this.game.physics.arcade.collide(this.player, this.enemies, (c) => this.player.hitCar(c));
+			this.game.physics.arcade.collide(this.lasers, this.enemies, (l, e) => this.laserHitsEnemy(l, e));
 			this.camera.focusOnXY(this.game.width / 2, this.player.position.y - (this.game.height / 2) + this.PLAYER_CAR_Y_OFFSET);
 
 			this.road.y += this.ROAD_MIN_SCROLL_SPEED;
@@ -78,6 +83,7 @@ module Ld33.Level {
 			else {
 				this.player.moveDrive();
 			}
+
 			if (this.keyLeft.justDown) {
 				this.player.moveLeft();
 			}
@@ -85,11 +91,28 @@ module Ld33.Level {
 				this.player.moveRight();
 			}
 
+			if (this.keyShoot.justDown) {
+				this.player.shoot();
+			}
+
 			this.mapParser.update();
 
 			if (this.player.bottom < 0) {
 				// Level cleared.
 			}
+		}
+
+		laserHitsEnemy(laser : Phaser.Sprite, enemy : Phaser.Sprite) {
+			laser.body.enable = false;
+			laser.kill();
+			enemy.damage(1);
+			if (enemy.health <= 0) {
+				this.onEnemyKilled(enemy);
+			}
+		}
+
+		onEnemyKilled(enemy : Phaser.Sprite) {
+			// TODO Explosion
 		}
 
 		render() {

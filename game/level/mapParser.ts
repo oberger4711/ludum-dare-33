@@ -11,6 +11,8 @@ module Ld33.Level {
 		private map : IMap;
 		private lanesX : number[];
 		private scaleFactor : number;
+
+		private onEnemyKilled : (s) => void;
 		
 		private nextRowIndex : number;
 
@@ -52,12 +54,23 @@ module Ld33.Level {
 		}
 
 		addCar(laneIndex : number, carIndex : number) {
-			var newCar : Phaser.Sprite = this.enemies.create(this.lanesX[laneIndex], this.game.camera.view.top - 32 * this.scaleFactor, 'car' + carIndex);
+			var x = this.lanesX[laneIndex];
+			var y = this.game.camera.view.top - 32 * this.scaleFactor;
+			switch (carIndex) {
+				case 1:
+					this.createCar(x, y, 0, 5, this.scaleFactor, 'car1');
+					break;
+			}
+		}
+
+		createCar(x, y, speed, health, scaleFactor, imgName) {
+			var newCar : Phaser.Sprite = this.enemies.create(x, y, imgName);
 			newCar.anchor.set(0.5, 0.5);
 			newCar.scale.set(this.scaleFactor, this.scaleFactor);
 			this.game.physics.enable(newCar, Phaser.Physics.ARCADE);
 			newCar.body.enable = true;
 			newCar.body.immovable = true;
+			newCar.body.velocity.y = speed;
 		}
 
 		getMapHeight() {

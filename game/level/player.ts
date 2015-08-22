@@ -18,20 +18,25 @@ module Ld33.Level {
 		private ACCELERATION_BREAK : number = 400;
 		private MAX_DRIVING_SPEED : number = 500;
 		private KNOCKBACK_SPEED : number = 50;
+		private LASER_SPEED : number = 2000;
 		private CRASH_RAGE_ADD : number = 0.4;
 		private BREAK_RAGE_ADD_PER_S : number = 0.07;
 
+		private scaleFactor : number;
 		private lanesX : number[];
 		
 		private state : PlayerState;
 		private lane : number = 2;
 		private rageLevel : number = 0;
+		private lasers : Phaser.Group;
 		private onDie : () => void;
 		private onKnockBack : () => void;
 
-		constructor(game, yOffset, lanesX : number[], scaleFactor : number) {
+		constructor(game, yOffset, lanesX : number[], scaleFactor : number, lasers : Phaser.Group) {
 			super(game, lanesX[2], yOffset, 'player-car');
 			this.lanesX = lanesX;
+			this.scaleFactor = scaleFactor;
+			this.lasers = lasers;
 			this.lane = 2;
 			this.anchor.set(0.5, 0.5);
 
@@ -73,6 +78,17 @@ module Ld33.Level {
 			if (this.state == PlayerState.Breaking) {
 				this.body.acceleration.y = -this.ACCELERATION_DRIVE;
 				this.makeStateTransition(PlayerState.Driving);
+			}
+		}
+
+		shoot() {
+			if (this.state == PlayerState.Driving) {
+				var laser : Phaser.Sprite = this.lasers.create(this.position.x, this.position.y, 'laser');
+				laser.anchor.set(0.5, 0.5);
+				laser.scale.set(this.scaleFactor, this.scaleFactor);
+				this.game.physics.enable(laser, Phaser.Physics.ARCADE);
+				laser.body.enable = true;
+				laser.body.velocity.y = -this.LASER_SPEED;
 			}
 		}
 

@@ -12,6 +12,7 @@ module Ld33.Preload {
 			this.game.load.image('player-car', 'assets/player-car.png');
 			this.game.load.image('car1', 'assets/car1.png');
 			this.game.load.image('road', 'assets/road.png');
+			this.game.load.image('laser', 'assets/laser.png');
 
 			// Maps
 			this.game.load.json('lvl0', 'assets/0.json');
