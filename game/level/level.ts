@@ -10,6 +10,7 @@ module Ld33.Level {
 
 		private mapIndex : number;
 		private scaleFactor : number = 1;
+		private lanesX : number[];
 
 		private road : Phaser.Sprite;
 		private player : Player;
@@ -36,9 +37,17 @@ module Ld33.Level {
 			this.road.scale.set(this.scaleFactor, this.scaleFactor);
 			this.road.height = this.game.height * 2;
 
-			this.player = new Player(this.game, this.game.width / 2, this.game.height - this.PLAYER_CAR_Y_OFFSET);
+			this.lanesX = [ this.calcLaneX(0), this.calcLaneX(1), this.calcLaneX(2), this.calcLaneX(3), this.calcLaneX(4) ];
+
+			this.player = new Player(this.game, this.game.height - this.PLAYER_CAR_Y_OFFSET, this.lanesX);
 			this.player.scale.set(this.scaleFactor, this.scaleFactor);
+			this.game.physics.enable(this.player, Phaser.Physics.ARCADE);
+			this.player.body.enable = true;
 			this.game.add.existing(this.player);
+		}
+
+		calcLaneX(index : number) : number {
+			return this.game.width / 2 + (index - 2) * 24;
 		}
 
 		update() {

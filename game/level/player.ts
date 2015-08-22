@@ -9,12 +9,15 @@ module Ld33.Level {
 	export class Player extends Phaser.Sprite {
 
 		private minDrivingSpeed : number = 300;
+		private lanesX : number[];
 		
 		private state : PlayerState;
+		private lane : number = 2;
 		private onDie : () => void;
 
-		constructor(game, x, y) {
-			super(game, x, y, 'player-car');
+		constructor(game, yOffset, lanesX : number[]) {
+			super(game, lanesX[2], yOffset, 'player-car');
+			this.lane = 2;
 			this.anchor.set(0.5, 0.5);
 
 			//this.animations.add('run', [0, 1, 2, 3, 4, 5, 6, 7, 8], 10, true);
