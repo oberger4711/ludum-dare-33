@@ -16,7 +16,7 @@ module Ld33.Level {
 		private lane : number = 2;
 		private onDie : () => void;
 
-		constructor(game, yOffset, lanesX : number[]) {
+		constructor(game, yOffset, lanesX : number[], scaleFactor : number) {
 			super(game, lanesX[2], yOffset, 'player-car');
 			this.lanesX = lanesX;
 			this.lane = 2;
@@ -25,6 +25,11 @@ module Ld33.Level {
 			//this.animations.add('run', [0, 1, 2, 3, 4, 5, 6, 7, 8], 10, true);
 			this.state = PlayerState.Driving;
 			//this.animations.play('stand');
+
+			this.scale.set(scaleFactor, scaleFactor);
+			this.game.physics.enable(this, Phaser.Physics.ARCADE);
+			this.body.enable = true;
+			this.body.velocity.y = -this.MIN_DRIVING_SPEED;
 		}
 
 		moveRight() {
@@ -48,9 +53,7 @@ module Ld33.Level {
 		}
 
 		restore() {
-			if (this.state == PlayerState.Dead) {
-				this.makeStateTransition(PlayerState.Driving);
-			}
+			this.makeStateTransition(PlayerState.Driving);
 		}
 
 		update() {
@@ -79,8 +82,8 @@ module Ld33.Level {
 		}
 
 		private finishSwitching(deltaLane : number) {
-			this.position.x = this.lanesX[this.lane + deltaLane];
 			this.body.velocity.x = 0;
+			this.body.x = this.lanesX[this.lane + deltaLane] - this.width / 2;
 			this.lane += deltaLane;
 			this.makeStateTransition(PlayerState.Driving);
 		}

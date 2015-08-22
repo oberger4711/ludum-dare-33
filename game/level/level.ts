@@ -1,5 +1,6 @@
 /// <reference path="../phaser.d.ts"/>
 /// <reference path="player.ts"/>
+/// <reference path="mapParser.ts"/>
 
 module Ld33.Level {
 	export class Level extends Phaser.State {
@@ -14,6 +15,7 @@ module Ld33.Level {
 
 		private road : Phaser.Sprite;
 		private player : Player;
+		private mapParser : MapParser;
 
 		private keyLeft : Phaser.Key;
 		private keyRight : Phaser.Key;
@@ -22,18 +24,21 @@ module Ld33.Level {
 			super();
 		}
 
-		init(mapIndex : number) {
-			this.mapIndex = mapIndex;
+		preload() {
 		}
 
-		preload() {
-			//this.game.load.tilemap(this.mapIndex.toString(), '../assets/' + this.mapIndex.toString() + '.json', null, Phaser.Tilemap.TILED_JSON);
+		init(mapIndex : number) {
+			this.mapIndex = mapIndex;
 		}
 
 		create() {
 			this.game.time.advancedTiming = true; // DEBUG
 			this.camera.roundPx = false;
 			
+			var map = this.game.cache.getJSON('lvl' + this.mapIndex);
+			this.mapParser = new MapParser(this.game, this.lanesX, map);
+			this.game.world.setBounds(0, 0, 800, this.mapParser.getMapHeight());
+
 			this.road = this.game.add.sprite(this.game.width / 2, this.game.height / 2, 'road');
 			this.scaleFactor = this.ROAD_WIDTH / this.road.width;
 			this.road.anchor.set(0.5, 0.5);
@@ -42,31 +47,35 @@ module Ld33.Level {
 
 			this.lanesX = [ this.calcLaneX(0), this.calcLaneX(1), this.calcLaneX(2), this.calcLaneX(3), this.calcLaneX(4) ];
 
-			this.player = new Player(this.game, this.game.height - this.PLAYER_CAR_Y_OFFSET, this.lanesX);
-			this.player.scale.set(this.scaleFactor, this.scaleFactor);
-			this.game.physics.enable(this.player, Phaser.Physics.ARCADE);
-			this.player.body.enable = true;
+			this.player = new Player(this.game, this.mapParser.getMapHeight(), this.lanesX, this.scaleFactor);
 			this.game.add.existing(this.player);
 
 			this.keyLeft = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 			this.keyRight = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
 		}
 
-		calcLaneX(index : number) : number {
+		private calcLaneX(index : number) : number {
 			return this.game.width / 2 + (index - 2) * 24 * this.scaleFactor;
 		}
 
 		update() {
+			this.camera.focusOnXY(this.game.width / 2, this.player.position.y - (this.game.height / 2) + this.PLAYER_CAR_Y_OFFSET);
+
 			this.road.y += this.ROAD_MIN_SCROLL_SPEED;
 			while (this.road.y - (this.road.height / 2) > this.camera.view.top) {
 				this.road.y -= this.road.height / 2;
 			}
 
-			if (this.keyLeft.justDown) {
+
+			if (this.keyLeft.isDown) {
 				this.player.moveLeft();
 			}
-			else if (this.keyRight.justDown) {
+			else if (this.keyRight.isDown) {
 				this.player.moveRight();
+			}
+
+			if (!this.mapParser.update()) {
+				console.log("Finished parsing map.");
 			}
 		}
 
