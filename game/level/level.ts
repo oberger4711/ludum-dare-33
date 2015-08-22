@@ -15,6 +15,7 @@ module Ld33.Level {
 
 		private road : Phaser.Sprite;
 		private player : Player;
+		private enemies : Phaser.Group;
 		private mapParser : MapParser;
 
 		private keyLeft : Phaser.Key;
@@ -43,8 +44,10 @@ module Ld33.Level {
 
 			this.lanesX = [ this.calcLaneX(0), this.calcLaneX(1), this.calcLaneX(2), this.calcLaneX(3), this.calcLaneX(4) ];
 
+			this.enemies = this.game.add.group();
+
 			var map = this.game.cache.getJSON('lvl' + this.mapIndex);
-			this.mapParser = new MapParser(this.game, this.lanesX, this.scaleFactor, map);
+			this.mapParser = new MapParser(this.game, this.enemies, this.lanesX, this.scaleFactor, map);
 			this.game.world.setBounds(0, 0, 800, this.mapParser.getMapHeight());
 
 			this.player = new Player(this.game, this.mapParser.getMapHeight() - this.PLAYER_CAR_Y_OFFSET, this.lanesX, this.scaleFactor);
@@ -59,6 +62,7 @@ module Ld33.Level {
 		}
 
 		update() {
+			this.game.physics.arcade.collide(this.player, this.enemies);
 			this.camera.focusOnXY(this.game.width / 2, this.player.position.y - (this.game.height / 2) + this.PLAYER_CAR_Y_OFFSET);
 
 			this.road.y += this.ROAD_MIN_SCROLL_SPEED;

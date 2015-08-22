@@ -8,8 +8,9 @@ module Ld33.Level {
 	};
 	export class Player extends Phaser.Sprite {
 
-		private LANE_SWITCHING_SPEED : number = 250;
-		private MIN_DRIVING_SPEED : number = 300;
+		private LANE_SWITCHING_SPEED : number = 500;
+		private ACCELERATION : number = 50;
+		private MAX_DRIVING_SPEED : number = 500;
 		private lanesX : number[];
 		
 		private state : PlayerState;
@@ -29,8 +30,9 @@ module Ld33.Level {
 			this.scale.set(scaleFactor, scaleFactor);
 			this.game.physics.enable(this, Phaser.Physics.ARCADE);
 			this.body.enable = true;
-			this.body.immovable = true;
-			this.body.velocity.y = -this.MIN_DRIVING_SPEED;
+			this.body.velocity.y = 0;
+			this.body.acceleration.set(0, -this.ACCELERATION);
+			this.body.maxVelocity.set(this.LANE_SWITCHING_SPEED, this.MAX_DRIVING_SPEED);
 		}
 
 		moveRight() {

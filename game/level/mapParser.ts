@@ -7,14 +7,16 @@ module Ld33.Level {
 		private ROW_PARSE_INTERVAL_IN_PX = 100;
 
 		private game : Phaser.Game;
+		private enemies : Phaser.Group;
 		private map : IMap;
 		private lanesX : number[];
 		private scaleFactor : number;
 		
 		private nextRowIndex : number;
 
-		constructor(game : Phaser.Game, lanesX : number[], scaleFactor : number, map : IMap) {
+		constructor(game : Phaser.Game, enemies : Phaser.Group, lanesX : number[], scaleFactor : number, map : IMap) {
 			this.game = game;
+			this.enemies = enemies;
 			this.map = map;
 			this.lanesX = lanesX;
 			this.scaleFactor = scaleFactor;
@@ -50,7 +52,7 @@ module Ld33.Level {
 		}
 
 		addCar(laneIndex : number, carIndex : number) {
-			var newCar : Phaser.Sprite = this.game.add.sprite(this.lanesX[laneIndex], this.game.camera.view.top - 32 * this.scaleFactor, 'car' + carIndex);
+			var newCar : Phaser.Sprite = this.enemies.create(this.lanesX[laneIndex], this.game.camera.view.top - 32 * this.scaleFactor, 'car' + carIndex);
 			newCar.anchor.set(0.5, 0.5);
 			newCar.scale.set(this.scaleFactor, this.scaleFactor);
 			this.game.physics.enable(newCar, Phaser.Physics.ARCADE);
