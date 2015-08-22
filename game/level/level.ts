@@ -6,6 +6,7 @@ module Ld33.Level {
 
 		private ROAD_WIDTH : number = 300;
 		private PLAYER_CAR_Y_OFFSET : number = 100;
+		private ROAD_MIN_SCROLL_SPEED = 20;
 
 		private mapIndex : number;
 		private scaleFactor : number = 1;
@@ -29,10 +30,11 @@ module Ld33.Level {
 			this.game.time.advancedTiming = true; // DEBUG
 			this.camera.roundPx = false;
 			
-			this.road = this.game.add.sprite(this.game.width / 2, this.game.height /2, 'road');
+			this.road = this.game.add.sprite(this.game.width / 2, this.game.height / 2, 'road');
 			this.scaleFactor = this.ROAD_WIDTH / this.road.width;
 			this.road.anchor.set(0.5, 0.5);
 			this.road.scale.set(this.scaleFactor, this.scaleFactor);
+			this.road.height = this.game.height * 2;
 
 			this.player = new Player(this.game, this.game.width / 2, this.game.height - this.PLAYER_CAR_Y_OFFSET);
 			this.player.scale.set(this.scaleFactor, this.scaleFactor);
@@ -40,6 +42,10 @@ module Ld33.Level {
 		}
 
 		update() {
+			this.road.y += this.ROAD_MIN_SCROLL_SPEED;
+			while (this.road.y - (this.road.height / 2) > this.camera.view.top) {
+				this.road.y -= this.road.height / 2;
+			}
 		}
 
 		render() {
