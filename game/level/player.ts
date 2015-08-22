@@ -3,7 +3,10 @@
 module Ld33.Level {
 	enum PlayerState {
 		Driving,
-		SwitchingLane,
+		SwitchingLaneLeft,
+		SwitchingLaneRight,
+		CancelSwitchingLaneLeft,
+		CancelSwitchingLaneRight,
 		Dead
 	};
 	export class Player extends Phaser.Sprite {
@@ -38,14 +41,14 @@ module Ld33.Level {
 		moveRight() {
 			if (this.state == PlayerState.Driving && this.lane < this.lanesX.length - 1) {
 				this.body.velocity.x = this.LANE_SWITCHING_SPEED;
-				this.makeStateTransition(PlayerState.SwitchingLane);
+				this.makeStateTransition(PlayerState.SwitchingLaneRight);
 			}
 		}
 
 		moveLeft() {
 			if (this.state == PlayerState.Driving && this.lane > 0) {
 				this.body.velocity.x = -this.LANE_SWITCHING_SPEED;
-				this.makeStateTransition(PlayerState.SwitchingLane);
+				this.makeStateTransition(PlayerState.SwitchingLaneLeft);
 			}
 		}
 
@@ -60,24 +63,36 @@ module Ld33.Level {
 		}
 
 		update() {
-			if (this.state == PlayerState.SwitchingLane) {
-				if (this.body.velocity.x > 0) {
-					if (this.position.x >= this.lanesX[this.lane + 1]) {
-						this.finishSwitching(1);
-					}
-					else if (this.body.blocked.right) {
-						// Switch failed. Hit a car.
-						// TODO
-					}
+			// Switching Lane
+			if (this.state == PlayerState.SwitchingLaneRight) {
+				if (this.position.x >= this.lanesX[this.lane + 1]) {
+					this.finishSwitching(1);
 				}
-				else if (this.body.velocity.x < 0) {
-					if (this.position.x <= this.lanesX[this.lane - 1]) {
-						this.finishSwitching(-1);
-					}
-					else if (this.body.blocked.left) {
-						// Switch failed. Hit a car.
-						// TODO
-					}
+				else if (this.body.touching.right) {
+					// Switch failed. Hit a car.
+					this.body.velocity.x = -this.LANE_SWITCHING_SPEED;
+					this.makeStateTransition(PlayerState.CancelSwitchingLaneRight);
+				}
+			}
+			else if (this.state == PlayerState.SwitchingLaneLeft) {
+				if (this.position.x <= this.lanesX[this.lane - 1]) {
+					this.finishSwitching(-1);
+				}
+				else if (this.body.touching.left) {
+					// Switch failed. Hit a car.
+					this.body.velocity.x = this.LANE_SWITCHING_SPEED;
+					this.makeStateTransition(PlayerState.CancelSwitchingLaneLeft);
+				}
+			}
+			// Cancel Switching Lane
+			else if (this.state == PlayerState.CancelSwitchingLaneLeft) {
+				if (this.position.x >= this.lanesX[this.lane]) {
+					this.finishSwitching(0);
+				}
+			}
+			else if (this.state == PlayerState.CancelSwitchingLaneRight) {
+				if (this.position.x <= this.lanesX[this.lane]) {
+					this.finishSwitching(0);
 				}
 			}
 			if (this.state != PlayerState.Dead) {
@@ -97,7 +112,8 @@ module Ld33.Level {
 					case PlayerState.Driving:
 						// TODO
 						break;
-					case PlayerState.SwitchingLane:
+					case PlayerState.SwitchingLaneLeft:
+					case PlayerState.SwitchingLaneRight:
 						// TODO
 						break;
 					case PlayerState.Dead:
