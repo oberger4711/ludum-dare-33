@@ -80,6 +80,7 @@ module Ld33.Level {
 			this.player.OnKnockBack = () => this.shakeScreen();
 			this.player.OnRageLevelChanged = () => this.updateRage();
 			this.player.OnDie = () => this.onPlayerDies();
+			this.road.position.y = this.mapParser.getMapHeight();
 
 			this.face = this.game.add.sprite(this.game.width, this.game.height, 'player-face');
 			this.face.fixedToCamera = true;

@@ -30,10 +30,12 @@ module Ld33.Preload {
 			this.game.load.json('lvl0', 'assets/0.json');
 
 			// Sound
-			//this.game.load.audio('music', 'assets/music.mp3');
+			this.game.load.audio('music', 'assets/music.mp3');
 		}
 
 		create() {
+			var music = this.game.add.sound('music', undefined, Number.MAX_VALUE);
+			music.play();
 			this.game.state.start("level", true, false, 0);
 		}
 
