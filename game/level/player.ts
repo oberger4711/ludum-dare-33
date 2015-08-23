@@ -29,6 +29,7 @@ module Ld33.Level {
 		private BREAK_RAGE_ADD_PER_S : number = 0.15;
 		private LASER_RAGE_ADD_PER_SHOT : number = 0.02;
 
+		private laserSound : Phaser.Sound;
 		private hitSound : Phaser.Sound;
 
 		private scaleFactor : number;
@@ -62,7 +63,8 @@ module Ld33.Level {
 			this.smokeEmitter.start(false, this.SMOKE_LIFETIME, 8);
 			this.smokeEmitter.on = false;
 
-			this.hitSound = this.game.add.sound('hit-player-snd', 0.6);
+			this.laserSound = this.game.add.sound('laser-snd', 0.15);
+			this.hitSound = this.game.add.sound('hit-player-snd', 0.5);
 
 			this.rnd = new Phaser.RandomDataGenerator([12, 43, 42]);
 			this.lane = 2;
@@ -124,6 +126,7 @@ module Ld33.Level {
 				laser.body.velocity.y = -this.LASER_SPEED;
 
 				this.addRage(this.LASER_RAGE_ADD_PER_SHOT);
+				this.laserSound.play();
 			}
 		}
 

@@ -115,7 +115,7 @@ module Ld33.Level {
 
 			this.updateRage();
 
-			this.laserHitSound = this.game.add.sound('hit-laser-snd', 0.6);
+			this.laserHitSound = this.game.add.sound('hit-laser-snd', 0.3);
 			this.explosionSound = this.game.add.sound('explosion-snd', 0.6);
 
 			this.keyLeft = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
