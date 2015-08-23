@@ -26,7 +26,7 @@ module Ld33.Level {
 		private smokePosRight : boolean = true;
 
 		private CRASH_RAGE_ADD : number = 0.4;
-		private BREAK_RAGE_ADD_PER_S : number = 0.05;
+		private BREAK_RAGE_ADD_PER_S : number = 0.15;
 		private LASER_RAGE_ADD_PER_SHOT : number = 0.02;
 
 		private scaleFactor : number;
@@ -140,55 +140,55 @@ module Ld33.Level {
 		}
 
 		update() {
-			this.smokeEmitter.emitY = this.position.y + this.height / 2;
-			if (this.smokePosRight) {
-				this.smokeEmitter.emitX = this.position.x - this.width / 2;
-			}
-			else {
-				this.smokeEmitter.emitX = this.position.x + this.width / 2;
-			}
-			this.smokePosRight = !this.smokePosRight;
-
-			// Switching Lane
-			if (this.state == PlayerState.SwitchingLaneRight) {
-				if (this.position.x >= this.lanesX[this.lane + 1]) {
-					this.finishSwitching(1);
-				}
-				else if (this.body.touching.right) {
-					// Switch failed. Hit a car.
-					this.body.velocity.x = -this.CANCEL_LANE_SWITCHING_SPEED;
-					this.makeStateTransition(PlayerState.CancelSwitchingLaneRight);
-				}
-			}
-			else if (this.state == PlayerState.SwitchingLaneLeft) {
-				if (this.position.x <= this.lanesX[this.lane - 1]) {
-					this.finishSwitching(-1);
-				}
-				else if (this.body.touching.left) {
-					// Switch failed. Hit a car.
-					this.body.velocity.x = this.CANCEL_LANE_SWITCHING_SPEED;
-					this.makeStateTransition(PlayerState.CancelSwitchingLaneLeft);
-				}
-			}
-			// Cancel Switching Lane
-			else if (this.state == PlayerState.CancelSwitchingLaneLeft) {
-				if (this.position.x >= this.lanesX[this.lane]) {
-					this.finishSwitching(0);
-				}
-			}
-			else if (this.state == PlayerState.CancelSwitchingLaneRight) {
-				if (this.position.x <= this.lanesX[this.lane]) {
-					this.finishSwitching(0);
-				}
-			}
-			else if (this.state == PlayerState.Breaking) {
-				if (this.body.velocity.y > 0) {
-					// Do not drive backwards.
-					this.body.velocity.y = 0;
-				}
-				this.addRage(this.BREAK_RAGE_ADD_PER_S * this.game.time.elapsed / 1000);
-			}
 			if (this.state != PlayerState.Dead) {
+				this.smokeEmitter.emitY = this.position.y + this.height / 2;
+				if (this.smokePosRight) {
+					this.smokeEmitter.emitX = this.position.x - this.width / 2;
+				}
+				else {
+					this.smokeEmitter.emitX = this.position.x + this.width / 2;
+				}
+				this.smokePosRight = !this.smokePosRight;
+
+				// Switching Lane
+				if (this.state == PlayerState.SwitchingLaneRight) {
+					if (this.position.x >= this.lanesX[this.lane + 1]) {
+						this.finishSwitching(1);
+					}
+					else if (this.body.touching.right) {
+						// Switch failed. Hit a car.
+						this.body.velocity.x = -this.CANCEL_LANE_SWITCHING_SPEED;
+						this.makeStateTransition(PlayerState.CancelSwitchingLaneRight);
+					}
+				}
+				else if (this.state == PlayerState.SwitchingLaneLeft) {
+					if (this.position.x <= this.lanesX[this.lane - 1]) {
+						this.finishSwitching(-1);
+					}
+					else if (this.body.touching.left) {
+						// Switch failed. Hit a car.
+						this.body.velocity.x = this.CANCEL_LANE_SWITCHING_SPEED;
+						this.makeStateTransition(PlayerState.CancelSwitchingLaneLeft);
+					}
+				}
+				// Cancel Switching Lane
+				else if (this.state == PlayerState.CancelSwitchingLaneLeft) {
+					if (this.position.x >= this.lanesX[this.lane]) {
+						this.finishSwitching(0);
+					}
+				}
+				else if (this.state == PlayerState.CancelSwitchingLaneRight) {
+					if (this.position.x <= this.lanesX[this.lane]) {
+						this.finishSwitching(0);
+					}
+				}
+				else if (this.state == PlayerState.Breaking) {
+					if (this.body.velocity.y > 0) {
+						// Do not drive backwards.
+						this.body.velocity.y = 0;
+					}
+					this.addRage(this.BREAK_RAGE_ADD_PER_S * this.game.time.elapsed / 1000);
+				}
 			}
 		}
 
