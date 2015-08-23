@@ -292,5 +292,9 @@ module Ld33.Level {
 			}, this);
 		}
 
+		get SpeedRatio() : number {
+			return Math.abs(this.body.velocity.y / this.body.maxVelocity.y);
+		}
+
 	}
 }

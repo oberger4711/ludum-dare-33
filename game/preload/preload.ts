@@ -9,6 +9,7 @@ module Ld33.Preload {
 
 		preload() {
 			// Images
+			this.game.load.image('blank', 'assets/blank.png');
 			this.game.load.image('player-car', 'assets/player-car.png');
 			this.game.load.image('car1', 'assets/car1.png');
 			this.game.load.image('car2', 'assets/car2.png');

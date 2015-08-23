@@ -7,8 +7,11 @@ module Ld33.Level {
 
 		private EXPLOSION_EXTRA_SCALE : number = 2;
 		private FACE_EXTRA_SCALE : number = 2;
+
 		private NUMBER_OF_LEVELS : number = 1;
+
 		private ROAD_WIDTH : number = 300;
+		private BAR_WIDTH : number = 30;
 		private PLAYER_CAR_Y_OFFSET : number = 100;
 		private ROAD_MIN_SCROLL_SPEED = 20;
 
@@ -22,6 +25,7 @@ module Ld33.Level {
 		private random : Phaser.RandomDataGenerator;
 		private rageTint : number;
 		private face : Phaser.Sprite;
+		private speedBar : Phaser.Sprite;
 		private filter : Phaser.Sprite;
 		private filterTween : Phaser.Tween;
 		private road : Phaser.Sprite;
@@ -82,6 +86,13 @@ module Ld33.Level {
 			this.face.scale.set(this.FACE_EXTRA_SCALE + this.scaleFactor, this.FACE_EXTRA_SCALE + this.scaleFactor);
 			this.face.frame = 0;
 
+			this.speedBar = this.game.add.sprite(0, this.game.height, 'blank');
+			this.speedBar.fixedToCamera = true;
+			this.speedBar.anchor.set(0, 1);
+			this.speedBar.tint = 0x00cf00;
+			this.speedBar.width = this.BAR_WIDTH;
+			this.speedBar.height = 0;
+
 			this.filter = this.game.add.sprite(0, 0, 'filter');
 			this.filter.alpha = 0.5;
 			this.filter.width = this.game.width;
@@ -109,6 +120,7 @@ module Ld33.Level {
 			this.camera.focusOnXY(this.game.width / 2 + this.cameraShakeOffset.x, this.player.position.y - (this.game.height / 2) + this.PLAYER_CAR_Y_OFFSET + this.cameraShakeOffset.y);
 
 			this.road.y += this.ROAD_MIN_SCROLL_SPEED;
+			this.speedBar.height = this.player.SpeedRatio * this.game.height;
 			while (this.road.y - (this.road.height / 2) > this.camera.view.top) {
 				this.road.y -= this.road.height / 2;
 			}
