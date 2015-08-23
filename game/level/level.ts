@@ -8,7 +8,7 @@ module Ld33.Level {
 		private EXPLOSION_EXTRA_SCALE : number = 2;
 		private FACE_EXTRA_SCALE : number = 2;
 
-		private NUMBER_OF_LEVELS : number = 4;
+		private NUMBER_OF_LEVELS : number = 5;
 
 		private ROAD_WIDTH : number = 300;
 		private BAR_WIDTH : number = 30;
@@ -118,6 +118,7 @@ module Ld33.Level {
 			this.levelText.anchor.set(1, 1);
 			this.levelText.fixedToCamera = true;
 
+			this.rageTint = undefined;
 			this.updateRage();
 
 			this.laserHitSound = this.game.add.sound('hit-laser-snd', 0.3);
