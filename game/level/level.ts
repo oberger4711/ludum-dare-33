@@ -5,6 +5,7 @@
 module Ld33.Level {
 	export class Level extends Phaser.State {
 
+		private EXPLOSION_EXTRA_SCALE : number = 2;
 		private NUMBER_OF_LEVELS : number = 1;
 		private ROAD_WIDTH : number = 300;
 		private PLAYER_CAR_Y_OFFSET : number = 100;
@@ -17,6 +18,7 @@ module Ld33.Level {
 		private scaleFactor : number = 1;
 		private lanesX : number[];
 
+		private rageTint : number;
 		private filter : Phaser.Sprite;
 		private filterTween : Phaser.Tween;
 		private road : Phaser.Sprite;
@@ -65,7 +67,7 @@ module Ld33.Level {
 
 			this.player = new Player(this.game, this.mapParser.getMapHeight() - this.PLAYER_CAR_Y_OFFSET, this.lanesX, this.scaleFactor, this.lasers);
 			this.game.add.existing(this.player);
-			this.player.OnKnockBack = () => this.onPlayerKnockBack();
+			this.player.OnKnockBack = () => this.shakeScreen();
 			this.player.OnRageLevelChanged = () => this.updateRage();
 			this.player.OnDie = () => this.onPlayerDies();
 
@@ -139,16 +141,18 @@ module Ld33.Level {
 		}
 
 		onEnemyKilled(enemy : Phaser.Sprite) {
-			// TODO Explosion
+			this.explode(enemy.position);
 		}
 
 		onPlayerDies() {
 			this.enemies.forEach((e) => {
 				e.body.moves = false;
 			}, this);
+			this.explode(this.player.position);
+			this.player.kill();
 		}
 
-		onPlayerKnockBack() {
+		shakeScreen() {
 			var rumbleOffset = 10;
 			var properties = { x: rumbleOffset };
 			var duration = 50;
@@ -161,18 +165,27 @@ module Ld33.Level {
 			quake.start();
 		}
 
+		explode(position : Phaser.Point) {
+			var expl : Phaser.Sprite = this.game.add.sprite(position.x, position.y, 'explosion');
+			expl.scale.set(this.EXPLOSION_EXTRA_SCALE + this.scaleFactor, this.EXPLOSION_EXTRA_SCALE + this.scaleFactor);
+			expl.anchor.set(0.5, 0.5);
+			expl.tint = this.rageTint;
+			expl.animations.add('explode', [0, 1, 2], 8);
+			expl.animations.play('explode', undefined, undefined, true);
+		}
+
 		updateRage() {
-			var rageTint = Phaser.Color.interpolateColor(this.FILTER_COLOR_FROM, this.FILTER_COLOR_TO, 4, Math.floor(4 * this.player.RageLevel), 0);
-			this.player.tint = rageTint;
-			this.filter.tint = rageTint;
+			this.rageTint = Phaser.Color.interpolateColor(this.FILTER_COLOR_FROM, this.FILTER_COLOR_TO, 4, Math.floor(4 * this.player.RageLevel), 0);
+			this.player.tint = this.rageTint;
+			this.filter.tint = this.rageTint;
 			this.enemies.forEach((e) => {
-				e.tint = rageTint;
+				e.tint = this.rageTint;
 			}, this);
 			this.lasers.forEach((l) => {
-				l.tint = rageTint;
+				l.tint = this.rageTint;
 			}, this);
-			this.road.tint = rageTint;
-			this.mapParser.RageTint = rageTint;
+			this.road.tint = this.rageTint;
+			this.mapParser.RageTint = this.rageTint;
 		}
 
 		render() {
