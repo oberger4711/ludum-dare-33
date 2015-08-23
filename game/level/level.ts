@@ -8,7 +8,7 @@ module Ld33.Level {
 		private EXPLOSION_EXTRA_SCALE : number = 2;
 		private FACE_EXTRA_SCALE : number = 2;
 
-		private NUMBER_OF_LEVELS : number = 2;
+		private NUMBER_OF_LEVELS : number = 4;
 
 		private ROAD_WIDTH : number = 300;
 		private BAR_WIDTH : number = 30;
