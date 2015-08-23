@@ -43,7 +43,7 @@ module Ld33.Preload {
 		create() {
 			var music = this.game.add.sound('music', undefined, Number.MAX_VALUE);
 			music.play();
-			this.game.state.start("level", true, false, 0);
+			this.game.state.start("intro", true, false);
 		}
 
 	}

@@ -35,6 +35,7 @@ module Ld33.Level {
 		private lasers : Phaser.Group;
 		private mapParser : MapParser;
 		private cameraShakeOffset : Phaser.Point;
+		private levelText : Phaser.Text;
 
 		private laserHitSound : Phaser.Sound;
 		private explosionSound : Phaser.Sound;
@@ -113,6 +114,10 @@ module Ld33.Level {
 
 			this.filterTween = undefined;
 
+			this.levelText = this.game.add.text(this.game.width - 10, this.game.height - this.face.height, "Level " + (this.mapIndex + 1), { fill : '#ffffff' });
+			this.levelText.anchor.set(1, 1);
+			this.levelText.fixedToCamera = true;
+
 			this.updateRage();
 
 			this.laserHitSound = this.game.add.sound('hit-laser-snd', 0.3);
@@ -158,7 +163,7 @@ module Ld33.Level {
 				this.player.shoot();
 			}
 
-			if (this.player.IsDead && this.keyRestart.justDown) {
+			if (this.keyRestart.justDown) {
 				this.game.state.start('level', true, false, this.mapIndex);
 			}
 
@@ -249,6 +254,7 @@ module Ld33.Level {
 		}
 
 		shutdown() {
+			this.game.world.removeAll();
 		}
 
 	}

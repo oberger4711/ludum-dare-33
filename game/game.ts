@@ -1,5 +1,6 @@
 /// <reference path="phaser.d.ts"/>
 /// <reference path="preload/preload.ts"/>
+/// <reference path="intro/intro.ts"/>
 /// <reference path="level/level.ts"/>
 
 module Ld33 {
@@ -9,6 +10,7 @@ module Ld33 {
 			super(600, 600, Phaser.CANVAS, 'content', undefined, undefined, false);
 
 			this.state.add("preload", Preload.Preload);
+			this.state.add("intro", Intro.Intro);
 			this.state.add("level", Level.Level);
 
 			this.state.start("preload");
