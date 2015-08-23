@@ -18,8 +18,13 @@ module Ld33.Level {
 		private ACCELERATION_BREAK : number = 600;
 		private MAX_DRIVING_SPEED : number = 500;
 		private KNOCKBACK_SPEED : number = 50;
+
 		private LASER_SPEED : number = 2000;
 		private LASER_FIRE_INTERVAL_IN_MS : number = 100;
+
+		private SMOKE_LIFETIME : number = 500;
+		private smokePosRight : boolean = true;
+
 		private CRASH_RAGE_ADD : number = 0.4;
 		private BREAK_RAGE_ADD_PER_S : number = 0.05;
 		private LASER_RAGE_ADD_PER_SHOT : number = 0.02;
@@ -32,6 +37,7 @@ module Ld33.Level {
 		private rageLevel : number = 0;
 		private lasers : Phaser.Group;
 		private lastLaserTimeStamp : number;
+		private smokeEmitter : Phaser.Particles.Arcade.Emitter;
 		private rnd : Phaser.RandomDataGenerator;
 		private onRageLevelChanged : () => void;
 		private onDie : () => void;
@@ -41,8 +47,19 @@ module Ld33.Level {
 			super(game, lanesX[2], yOffset, 'player-car');
 			this.lanesX = lanesX;
 			this.scaleFactor = scaleFactor;
+
 			this.lasers = lasers;
 			this.lastLaserTimeStamp = 0;
+
+			this.smokeEmitter = this.game.add.emitter(this.position.x, this.position.y, 100);
+			this.smokeEmitter.makeParticles(['smoke']);
+			this.smokeEmitter.setXSpeed(-50, 50);
+			this.smokeEmitter.setYSpeed(100, 400);
+			this.smokeEmitter.setAlpha(1, 0, this.SMOKE_LIFETIME);
+			this.smokeEmitter.setScale(0.3 * scaleFactor, scaleFactor, 0.3 * scaleFactor, scaleFactor, this.SMOKE_LIFETIME);
+			this.smokeEmitter.start(false, this.SMOKE_LIFETIME, 8);
+			this.smokeEmitter.on = false;
+
 			this.rnd = new Phaser.RandomDataGenerator([12, 43, 42]);
 			this.lane = 2;
 			this.anchor.set(0.5, 0.5);
@@ -122,6 +139,15 @@ module Ld33.Level {
 		}
 
 		update() {
+			this.smokeEmitter.emitY = this.position.y + this.height / 2;
+			if (this.smokePosRight) {
+				this.smokeEmitter.emitX = this.position.x - this.width / 2;
+			}
+			else {
+				this.smokeEmitter.emitX = this.position.x + this.width / 2;
+			}
+			this.smokePosRight = !this.smokePosRight;
+
 			// Switching Lane
 			if (this.state == PlayerState.SwitchingLaneRight) {
 				if (this.position.x >= this.lanesX[this.lane + 1]) {
@@ -177,14 +203,14 @@ module Ld33.Level {
 			if (hitTop) {
 				// Knockback
 				this.body.velocity.y = this.KNOCKBACK_SPEED;
-				if (this.onKnockBack) {
-					this.onKnockBack();
-				}
 			}
 			var hitLeft = this.body.wasTouching.left != this.body.touching.left;
 			var hitRight = this.body.wasTouching.right != this.body.touching.right;
 			if (hitTop || hitLeft || hitRight) {
 				this.addRage(this.CRASH_RAGE_ADD);
+				if (this.onKnockBack) {
+					this.onKnockBack();
+				}
 			}
 		}
 
@@ -205,12 +231,13 @@ module Ld33.Level {
 
 		makeStateTransition(value : PlayerState) {
 			if (this.state != value) {
+				this.smokeEmitter.on = false;
 				switch (value) {
 					case PlayerState.Driving:
 						// TODO
 						break;
 					case PlayerState.Breaking:
-						// TODO
+						this.smokeEmitter.on = true;
 						break;
 					case PlayerState.SwitchingLaneLeft:
 					case PlayerState.SwitchingLaneRight:
