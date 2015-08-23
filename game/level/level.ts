@@ -36,6 +36,8 @@ module Ld33.Level {
 		private mapParser : MapParser;
 		private cameraShakeOffset : Phaser.Point;
 
+		private explosionSound : Phaser.Sound;
+
 		private keyLeft : Phaser.Key;
 		private keyRight : Phaser.Key;
 		private keyBreak : Phaser.Key;
@@ -112,6 +114,8 @@ module Ld33.Level {
 
 			this.updateRage();
 
+			this.explosionSound = this.game.add.sound('explosion-snd', 0.6);
+
 			this.keyLeft = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 			this.keyRight = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
 			this.keyBreak = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
@@ -129,7 +133,7 @@ module Ld33.Level {
 			this.camera.focusOnXY(this.game.width / 2 + this.cameraShakeOffset.x, this.player.position.y - (this.game.height / 2) + this.PLAYER_CAR_Y_OFFSET + this.cameraShakeOffset.y);
 
 			this.road.y += this.ROAD_MIN_SCROLL_SPEED;
-			this.speedBar.height = this.player.SpeedRatio * this.game.height;
+			this.speedBar.height = Math.max(1, this.player.SpeedRatio * this.game.height);
 			while (this.road.y - (this.road.height / 2) > this.camera.view.top) {
 				this.road.y -= this.road.height / 2;
 			}
@@ -205,6 +209,7 @@ module Ld33.Level {
 			expl.rotation = this.random.between(0, 360);
 			expl.animations.add('explode', [0, 1, 2], 6);
 			expl.animations.play('explode', undefined, undefined, true);
+			this.explosionSound.play();
 		}
 
 		updateRage() {
