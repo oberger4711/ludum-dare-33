@@ -10,10 +10,15 @@ module Ld33.Level {
 		private PLAYER_CAR_Y_OFFSET : number = 100;
 		private ROAD_MIN_SCROLL_SPEED = 20;
 
+		private FILTER_COLOR_FROM = 0xffff00;
+		private FILTER_COLOR_TO = 0xff0000;
+
 		private mapIndex : number;
 		private scaleFactor : number = 1;
 		private lanesX : number[];
 
+		private filter : Phaser.Sprite;
+		private filterTween : Phaser.Tween;
 		private road : Phaser.Sprite;
 		private player : Player;
 		private enemies : Phaser.Group;
@@ -24,6 +29,7 @@ module Ld33.Level {
 		private keyRight : Phaser.Key;
 		private keyBreak : Phaser.Key;
 		private keyShoot : Phaser.Key;
+		private keyRestart : Phaser.Key;
 
 		constructor() {
 			super();
@@ -57,12 +63,22 @@ module Ld33.Level {
 
 			this.player = new Player(this.game, this.mapParser.getMapHeight() - this.PLAYER_CAR_Y_OFFSET, this.lanesX, this.scaleFactor, this.lasers);
 			this.game.add.existing(this.player);
+			this.player.OnRageLevelChanged = () => this.onRageLevelChanged();
 			this.player.OnDie = () => this.onPlayerDies();
+
+			this.filter = this.game.add.sprite(0, 0, 'filter');
+			this.filter.width = this.game.width;
+			this.filter.height = this.game.height;
+			this.filter.fixedToCamera = true;
+
+			this.filterTween = this.game.add.tween(this.filter).to({ alpha : 0 }, 500, undefined, true, 0, Number.MAX_VALUE);
+			this.filterTween.yoyo(true);
 
 			this.keyLeft = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 			this.keyRight = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
 			this.keyBreak = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
 			this.keyShoot = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+			this.keyRestart = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
 		}
 
 		private calcLaneX(index : number) : number {
@@ -97,6 +113,10 @@ module Ld33.Level {
 				this.player.shoot();
 			}
 
+			if (this.player.IsDead && this.keyRestart.justDown) {
+				this.game.state.start('level', true, false, this.mapIndex);
+			}
+
 			this.mapParser.update();
 
 			if (this.player.bottom < 0) {
@@ -121,6 +141,10 @@ module Ld33.Level {
 			this.enemies.forEach((e) => {
 				e.body.moves = false;
 			}, this);
+		}
+
+		onRageLevelChanged() {
+			this.filter.tint = Phaser.Color.interpolateColor(this.FILTER_COLOR_FROM, this.FILTER_COLOR_TO, 4, Math.floor(4 * this.player.RageLevel), 0);
 		}
 
 		render() {

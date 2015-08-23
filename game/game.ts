@@ -6,7 +6,7 @@ module Ld33 {
 	export class MyGame extends Phaser.Game {
 
 		constructor() {
-			super(800, 600, Phaser.CANVAS, 'content', undefined, undefined, false);
+			super(600, 600, Phaser.CANVAS, 'content', undefined, undefined, false);
 
 			this.state.add("preload", Preload.Preload);
 			this.state.add("level", Level.Level);

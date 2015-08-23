@@ -33,6 +33,7 @@ module Ld33.Level {
 		private lasers : Phaser.Group;
 		private lastLaserTimeStamp : number;
 		private rnd : Phaser.RandomDataGenerator;
+		private onRageLevelChanged : () => void;
 		private onDie : () => void;
 		private onKnockBack : () => void;
 
@@ -186,9 +187,14 @@ module Ld33.Level {
 			this.rageLevel += value;
 			if (this.rageLevel >= 1) {
 				this.rageLevel = 1;
-				this.die();
 			}
 			console.log("Rage level : " + this.rageLevel);
+			if (this.onRageLevelChanged) {
+				this.onRageLevelChanged();
+			}
+			if (this.rageLevel >= 1) {
+				this.die();
+			}
 		}
 
 
@@ -213,6 +219,18 @@ module Ld33.Level {
 				}
 				this.state = value;
 			}
+		}
+
+		get RageLevel() : number {
+			return this.rageLevel;
+		}
+
+		get OnRageLevelChanged() : () => void {
+			return this.onRageLevelChanged;
+		}
+
+		set OnRageLevelChanged(value : () => void) {
+			this.onRageLevelChanged = value;
 		}
 
 		get OnDie() : () => void {

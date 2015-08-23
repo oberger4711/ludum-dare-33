@@ -14,6 +14,7 @@ module Ld33.Preload {
 			this.game.load.image('car2', 'assets/car2.png');
 			this.game.load.image('car3', 'assets/car3.png');
 
+			this.game.load.image('filter', 'assets/filter.png');
 			this.game.load.image('road', 'assets/road.png');
 			this.game.load.image('laser', 'assets/laser.png');
 
