@@ -115,7 +115,7 @@ module Ld33.Level {
 
 		shoot() {
 			var timeSinceLastShot = this.game.time.now - this.lastLaserTimeStamp;
-			if (this.state == PlayerState.Driving && timeSinceLastShot > this.LASER_FIRE_INTERVAL_IN_MS) {
+			if (this.state != PlayerState.Dead && timeSinceLastShot > this.LASER_FIRE_INTERVAL_IN_MS) {
 				this.lastLaserTimeStamp = this.game.time.now;
 				var laser : Phaser.Sprite = this.lasers.create(this.position.x + this.rnd.between(-this.width / 2, this.width / 2), this.position.y, 'laser');
 				laser.tint = this.tint;
