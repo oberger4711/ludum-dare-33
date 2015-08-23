@@ -15,13 +15,13 @@ module Ld33.Level {
 		private LANE_SWITCHING_SPEED : number = 500;
 		private CANCEL_LANE_SWITCHING_SPEED : number = 250;
 		private ACCELERATION_DRIVE : number = 70;
-		private ACCELERATION_BREAK : number = 400;
-		private MAX_DRIVING_SPEED : number = 400;
+		private ACCELERATION_BREAK : number = 600;
+		private MAX_DRIVING_SPEED : number = 500;
 		private KNOCKBACK_SPEED : number = 50;
 		private LASER_SPEED : number = 2000;
 		private LASER_FIRE_INTERVAL_IN_MS : number = 100;
 		private CRASH_RAGE_ADD : number = 0.4;
-		private BREAK_RAGE_ADD_PER_S : number = 0.03;
+		private BREAK_RAGE_ADD_PER_S : number = 0.05;
 		private LASER_RAGE_ADD_PER_SHOT : number = 0.02;
 
 		private scaleFactor : number;

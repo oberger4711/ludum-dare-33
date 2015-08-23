@@ -5,6 +5,7 @@
 module Ld33.Level {
 	export class Level extends Phaser.State {
 
+		private NUMBER_OF_LEVELS : number = 1;
 		private ROAD_WIDTH : number = 300;
 		private PLAYER_CAR_Y_OFFSET : number = 100;
 		private ROAD_MIN_SCROLL_SPEED = 20;
@@ -56,6 +57,7 @@ module Ld33.Level {
 
 			this.player = new Player(this.game, this.mapParser.getMapHeight() - this.PLAYER_CAR_Y_OFFSET, this.lanesX, this.scaleFactor, this.lasers);
 			this.game.add.existing(this.player);
+			this.player.OnDie = () => this.onPlayerDies();
 
 			this.keyLeft = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 			this.keyRight = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
@@ -98,7 +100,7 @@ module Ld33.Level {
 			this.mapParser.update();
 
 			if (this.player.bottom < 0) {
-				// Level cleared.
+				this.game.state.start('level', true, false, (this.mapIndex + 1) % this.NUMBER_OF_LEVELS);
 			}
 		}
 
@@ -113,6 +115,12 @@ module Ld33.Level {
 
 		onEnemyKilled(enemy : Phaser.Sprite) {
 			// TODO Explosion
+		}
+
+		onPlayerDies() {
+			this.enemies.forEach((e) => {
+				e.body.moves = false;
+			}, this);
 		}
 
 		render() {
