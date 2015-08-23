@@ -63,7 +63,7 @@ module Ld33.Level {
 
 			this.player = new Player(this.game, this.mapParser.getMapHeight() - this.PLAYER_CAR_Y_OFFSET, this.lanesX, this.scaleFactor, this.lasers);
 			this.game.add.existing(this.player);
-			this.player.OnRageLevelChanged = () => this.onRageLevelChanged();
+			this.player.OnRageLevelChanged = () => this.updateRage();
 			this.player.OnDie = () => this.onPlayerDies();
 
 			this.filter = this.game.add.sprite(0, 0, 'filter');
@@ -73,6 +73,8 @@ module Ld33.Level {
 
 			this.filterTween = this.game.add.tween(this.filter).to({ alpha : 0 }, 500, undefined, true, 0, Number.MAX_VALUE);
 			this.filterTween.yoyo(true);
+
+			this.updateRage();
 
 			this.keyLeft = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 			this.keyRight = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
@@ -143,8 +145,18 @@ module Ld33.Level {
 			}, this);
 		}
 
-		onRageLevelChanged() {
-			this.filter.tint = Phaser.Color.interpolateColor(this.FILTER_COLOR_FROM, this.FILTER_COLOR_TO, 4, Math.floor(4 * this.player.RageLevel), 0);
+		updateRage() {
+			var rageTint = Phaser.Color.interpolateColor(this.FILTER_COLOR_FROM, this.FILTER_COLOR_TO, 4, Math.floor(4 * this.player.RageLevel), 0);
+			this.player.tint = rageTint;
+			this.filter.tint = rageTint;
+			this.enemies.forEach((e) => {
+				e.tint = rageTint;
+			}, this);
+			this.lasers.forEach((l) => {
+				l.tint = rageTint;
+			}, this);
+			this.road.tint = rageTint;
+			this.mapParser.RageTint = rageTint;
 		}
 
 		render() {

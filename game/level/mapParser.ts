@@ -11,6 +11,7 @@ module Ld33.Level {
 		private map : IMap;
 		private lanesX : number[];
 		private scaleFactor : number;
+		private rageTint : number;
 
 		private onEnemyKilled : (s) => void;
 		
@@ -58,16 +59,16 @@ module Ld33.Level {
 			var y = this.game.camera.view.top - 32 * this.scaleFactor;
 			switch (carIndex) {
 				case 1:
-					this.createCar(x, y, -60, Number.MAX_VALUE, 'car1');
+					this.createCar(x, y, 0, Number.MAX_VALUE, 'car1');
 					break;
 				case 2:
-					this.createCar(x, y, -30, Number.MAX_VALUE, 'car2');
+					this.createCar(x, y, 0, Number.MAX_VALUE, 'car2');
 					break;
 				case 3:
 					this.createCar(x, y, 0, Number.MAX_VALUE, 'car3');
 					break;
 				case 4:
-					this.createCar(x, y, -60, 5, 'car4');
+					this.createCar(x, y, 0, 5, 'car4');
 					break;
 			}
 		}
@@ -76,6 +77,7 @@ module Ld33.Level {
 			var newCar : Phaser.Sprite = this.enemies.create(x, y, imgName);
 			newCar.anchor.set(0.5, 0.5);
 			newCar.health = health;
+			newCar.tint = this.rageTint;
 			newCar.scale.set(this.scaleFactor, this.scaleFactor);
 			this.game.physics.enable(newCar, Phaser.Physics.ARCADE);
 			newCar.body.enable = true;
@@ -85,6 +87,10 @@ module Ld33.Level {
 
 		getMapHeight() {
 			return this.map.rows.length * this.ROW_PARSE_INTERVAL_IN_PX + this.game.height * 3;
+		}
+
+		set RageTint (value : number) {
+			this.rageTint = value;
 		}
 
 	}
