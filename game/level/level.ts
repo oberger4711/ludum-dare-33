@@ -184,21 +184,24 @@ module Ld33.Level {
 
 		updateRage() {
 			var levelOfFour = Math.floor(4 * this.player.RageLevel);
-			console.log(levelOfFour);
-			this.rageTint = Phaser.Color.interpolateColor(this.FILTER_COLOR_FROM, this.FILTER_COLOR_TO, 4, levelOfFour, 0);
-			this.player.tint = this.rageTint;
-			this.enemies.forEach((e) => {
-				e.tint = this.rageTint;
-			}, this);
-			this.lasers.forEach((l) => {
-				l.tint = this.rageTint;
-			}, this);
-			this.road.tint = this.rageTint;
-			this.mapParser.RageTint = this.rageTint;
+			var rageTint = Phaser.Color.interpolateColor(this.FILTER_COLOR_FROM, this.FILTER_COLOR_TO, 4, levelOfFour, 0);
+			if (this.rageTint != rageTint) {
+				console.log(levelOfFour);
+				this.rageTint = rageTint;
+				this.player.Tint = this.rageTint;
+				this.enemies.forEach((e) => {
+					e.tint = this.rageTint;
+				}, this);
+				this.lasers.forEach((l) => {
+					l.tint = this.rageTint;
+				}, this);
+				this.road.tint = this.rageTint;
+				this.mapParser.RageTint = this.rageTint;
+				this.face.tint = this.rageTint;
+				this.filter.tint = this.rageTint;
+			}
 
 			this.face.frame = levelOfFour;
-			this.face.tint = this.rageTint;
-			this.filter.tint = this.rageTint;
 			if (this.player.RageLevel >= 0.6 && this.filterTween == undefined) {
 				this.filter.alpha = 1;
 				this.filterTween = this.game.add.tween(this.filter).to({ alpha : 0 }, 250, undefined, true, 0, Number.MAX_VALUE);

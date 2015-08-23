@@ -112,6 +112,7 @@ module Ld33.Level {
 			if (this.state == PlayerState.Driving && timeSinceLastShot > this.LASER_FIRE_INTERVAL_IN_MS) {
 				this.lastLaserTimeStamp = this.game.time.now;
 				var laser : Phaser.Sprite = this.lasers.create(this.position.x + this.rnd.between(-this.width / 2, this.width / 2), this.position.y, 'laser');
+				laser.tint = this.tint;
 				laser.anchor.set(0.5, 0.5);
 				laser.scale.set(this.scaleFactor, this.scaleFactor);
 				this.game.physics.enable(laser, Phaser.Physics.ARCADE);
@@ -219,7 +220,6 @@ module Ld33.Level {
 			if (this.rageLevel >= 1) {
 				this.rageLevel = 1;
 			}
-			console.log("Rage level : " + this.rageLevel);
 			if (this.onRageLevelChanged) {
 				this.onRageLevelChanged();
 			}
@@ -283,6 +283,13 @@ module Ld33.Level {
 
 		get IsDead() : boolean {
 			return this.state == PlayerState.Dead;
+		}
+
+		set Tint(value : number) {
+			this.tint = value;
+			this.smokeEmitter.forEach((p) => {
+				p.tint = value;
+			}, this);
 		}
 
 	}
