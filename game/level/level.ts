@@ -36,6 +36,7 @@ module Ld33.Level {
 		private mapParser : MapParser;
 		private cameraShakeOffset : Phaser.Point;
 
+		private laserHitSound : Phaser.Sound;
 		private explosionSound : Phaser.Sound;
 
 		private keyLeft : Phaser.Key;
@@ -114,6 +115,7 @@ module Ld33.Level {
 
 			this.updateRage();
 
+			this.laserHitSound = this.game.add.sound('hit-laser-snd', 0.6);
 			this.explosionSound = this.game.add.sound('explosion-snd', 0.6);
 
 			this.keyLeft = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
@@ -174,6 +176,7 @@ module Ld33.Level {
 			if (enemy.health <= 0) {
 				this.onEnemyKilled(enemy);
 			}
+			this.laserHitSound.play();
 		}
 
 		onEnemyKilled(enemy : Phaser.Sprite) {

@@ -62,7 +62,7 @@ module Ld33.Level {
 			this.smokeEmitter.start(false, this.SMOKE_LIFETIME, 8);
 			this.smokeEmitter.on = false;
 
-			this.hitSound = this.game.add.sound('hit-snd', 0.6);
+			this.hitSound = this.game.add.sound('hit-player-snd', 0.6);
 
 			this.rnd = new Phaser.RandomDataGenerator([12, 43, 42]);
 			this.lane = 2;
