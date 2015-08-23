@@ -171,7 +171,13 @@ module Ld33.Level {
 			this.mapParser.update();
 
 			if (this.player.bottom < 0) {
-				this.game.state.start('level', true, false, (this.mapIndex + 1) % this.NUMBER_OF_LEVELS);
+				var nextMapIndex = this.mapIndex + 1;
+				if (nextMapIndex == this.NUMBER_OF_LEVELS) {
+					this.game.state.start('intro', true, false);
+				}
+				else {
+					this.game.state.start('level', true, false, (this.mapIndex + 1) % this.NUMBER_OF_LEVELS);
+				}
 			}
 		}
 
