@@ -32,6 +32,7 @@ module Ld33.Preload {
 			// Sound
 			this.game.load.audio('music', 'assets/music.mp3');
 			this.game.load.audio('explosion-snd', 'assets/explosion.mp3');
+			this.game.load.audio('hit-snd', 'assets/hit.mp3');
 		}
 
 		create() {
