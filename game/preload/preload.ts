@@ -8,6 +8,8 @@ module Ld33.Preload {
 		}
 
 		preload() {
+			var text = this.game.add.text(this.game.width / 2, this.game.height / 2, "Loading...", { fill : '#ffffff' });
+			text.anchor.set(0.5, 0.5);
 			// Images
 			this.game.load.image('speedbar', 'assets/speedbar.png');
 			this.game.load.image('ragebar', 'assets/ragebar.png');
