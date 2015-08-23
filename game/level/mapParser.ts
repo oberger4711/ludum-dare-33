@@ -58,13 +58,16 @@ module Ld33.Level {
 			var y = this.game.camera.view.top - 32 * this.scaleFactor;
 			switch (carIndex) {
 				case 1:
-					this.createCar(x, y, -60, 5, 'car1');
+					this.createCar(x, y, -60, Number.MAX_VALUE, 'car1');
 					break;
 				case 2:
-					this.createCar(x, y, -30, 13, 'car2');
+					this.createCar(x, y, -30, Number.MAX_VALUE, 'car2');
 					break;
 				case 3:
-					this.createCar(x, y, 0, 40, 'car3');
+					this.createCar(x, y, 0, Number.MAX_VALUE, 'car3');
+					break;
+				case 4:
+					this.createCar(x, y, -60, 5, 'car4');
 					break;
 			}
 		}
