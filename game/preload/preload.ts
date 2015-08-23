@@ -28,6 +28,8 @@ module Ld33.Preload {
 
 			// Maps
 			this.game.load.json('lvl0', 'assets/0.json');
+			this.game.load.json('lvl1', 'assets/1.json');
+			this.game.load.json('lvl2', 'assets/2.json');
 
 			// Sound
 			this.game.load.audio('music', 'assets/music.mp3');
