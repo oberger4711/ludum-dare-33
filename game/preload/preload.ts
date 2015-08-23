@@ -18,7 +18,10 @@ module Ld33.Preload {
 			this.game.load.image('filter', 'assets/filter.png');
 			this.game.load.image('road', 'assets/road.png');
 			this.game.load.image('laser', 'assets/laser.png');
+
+			// Spritesheets
 			this.game.load.spritesheet('explosion', 'assets/explosion.png', 64, 64);
+			this.game.load.spritesheet('player-face', 'assets/player-face.png', 32, 32);
 
 			// Maps
 			this.game.load.json('lvl0', 'assets/0.json');

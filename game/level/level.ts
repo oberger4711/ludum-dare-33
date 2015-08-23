@@ -6,6 +6,7 @@ module Ld33.Level {
 	export class Level extends Phaser.State {
 
 		private EXPLOSION_EXTRA_SCALE : number = 2;
+		private FACE_EXTRA_SCALE : number = 2;
 		private NUMBER_OF_LEVELS : number = 1;
 		private ROAD_WIDTH : number = 300;
 		private PLAYER_CAR_Y_OFFSET : number = 100;
@@ -19,6 +20,7 @@ module Ld33.Level {
 		private lanesX : number[];
 
 		private rageTint : number;
+		private face : Phaser.Sprite;
 		private filter : Phaser.Sprite;
 		private filterTween : Phaser.Tween;
 		private road : Phaser.Sprite;
@@ -70,6 +72,12 @@ module Ld33.Level {
 			this.player.OnKnockBack = () => this.shakeScreen();
 			this.player.OnRageLevelChanged = () => this.updateRage();
 			this.player.OnDie = () => this.onPlayerDies();
+
+			this.face = this.game.add.sprite(this.game.width, this.game.height, 'player-face');
+			this.face.fixedToCamera = true;
+			this.face.anchor.set(1, 1);
+			this.face.scale.set(this.FACE_EXTRA_SCALE + this.scaleFactor, this.FACE_EXTRA_SCALE + this.scaleFactor);
+			this.face.frame = 0;
 
 			this.filter = this.game.add.sprite(0, 0, 'filter');
 			this.filter.alpha = 0.5;
@@ -175,7 +183,9 @@ module Ld33.Level {
 		}
 
 		updateRage() {
-			this.rageTint = Phaser.Color.interpolateColor(this.FILTER_COLOR_FROM, this.FILTER_COLOR_TO, 4, Math.floor(4 * this.player.RageLevel), 0);
+			var levelOfFour = Math.floor(4 * this.player.RageLevel);
+			console.log(levelOfFour);
+			this.rageTint = Phaser.Color.interpolateColor(this.FILTER_COLOR_FROM, this.FILTER_COLOR_TO, 4, levelOfFour, 0);
 			this.player.tint = this.rageTint;
 			this.enemies.forEach((e) => {
 				e.tint = this.rageTint;
@@ -186,6 +196,8 @@ module Ld33.Level {
 			this.road.tint = this.rageTint;
 			this.mapParser.RageTint = this.rageTint;
 
+			this.face.frame = levelOfFour;
+			this.face.tint = this.rageTint;
 			this.filter.tint = this.rageTint;
 			if (this.player.RageLevel >= 0.6 && this.filterTween == undefined) {
 				this.filter.alpha = 1;
