@@ -68,7 +68,7 @@ module Ld33.Level {
 					this.createCar(x, y, 0, Number.MAX_VALUE, 'car3');
 					break;
 				case 4:
-					this.createCar(x, y, 0, 5, 'car4');
+					this.createCar(x, y, 0, 3, 'car4');
 					break;
 			}
 		}

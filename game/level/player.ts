@@ -61,6 +61,7 @@ module Ld33.Level {
 		}
 
 		moveRight() {
+			this.moveDrive();
 			if (this.state == PlayerState.Driving && this.lane < this.lanesX.length - 1) {
 				this.body.velocity.x = this.LANE_SWITCHING_SPEED;
 				this.makeStateTransition(PlayerState.SwitchingLaneRight);
@@ -68,6 +69,7 @@ module Ld33.Level {
 		}
 
 		moveLeft() {
+			this.moveDrive();
 			if (this.state == PlayerState.Driving && this.lane > 0) {
 				this.body.velocity.x = -this.LANE_SWITCHING_SPEED;
 				this.makeStateTransition(PlayerState.SwitchingLaneLeft);

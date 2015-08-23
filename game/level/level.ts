@@ -72,12 +72,12 @@ module Ld33.Level {
 			this.player.OnDie = () => this.onPlayerDies();
 
 			this.filter = this.game.add.sprite(0, 0, 'filter');
+			this.filter.alpha = 0.5;
 			this.filter.width = this.game.width;
 			this.filter.height = this.game.height;
 			this.filter.fixedToCamera = true;
 
-			this.filterTween = this.game.add.tween(this.filter).to({ alpha : 0 }, 500, undefined, true, 0, Number.MAX_VALUE);
-			this.filterTween.yoyo(true);
+			this.filterTween = undefined;
 
 			this.updateRage();
 
@@ -170,14 +170,13 @@ module Ld33.Level {
 			expl.scale.set(this.EXPLOSION_EXTRA_SCALE + this.scaleFactor, this.EXPLOSION_EXTRA_SCALE + this.scaleFactor);
 			expl.anchor.set(0.5, 0.5);
 			expl.tint = this.rageTint;
-			expl.animations.add('explode', [0, 1, 2], 8);
+			expl.animations.add('explode', [0, 1, 2], 6);
 			expl.animations.play('explode', undefined, undefined, true);
 		}
 
 		updateRage() {
 			this.rageTint = Phaser.Color.interpolateColor(this.FILTER_COLOR_FROM, this.FILTER_COLOR_TO, 4, Math.floor(4 * this.player.RageLevel), 0);
 			this.player.tint = this.rageTint;
-			this.filter.tint = this.rageTint;
 			this.enemies.forEach((e) => {
 				e.tint = this.rageTint;
 			}, this);
@@ -186,6 +185,13 @@ module Ld33.Level {
 			}, this);
 			this.road.tint = this.rageTint;
 			this.mapParser.RageTint = this.rageTint;
+
+			this.filter.tint = this.rageTint;
+			if (this.player.RageLevel >= 0.6 && this.filterTween == undefined) {
+				this.filter.alpha = 1;
+				this.filterTween = this.game.add.tween(this.filter).to({ alpha : 0 }, 250, undefined, true, 0, Number.MAX_VALUE);
+				this.filterTween.yoyo(true);
+			}
 		}
 
 		render() {
