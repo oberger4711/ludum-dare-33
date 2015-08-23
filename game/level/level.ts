@@ -58,7 +58,6 @@ module Ld33.Level {
 		}
 
 		create() {
-			this.game.time.advancedTiming = true; // DEBUG
 			this.camera.roundPx = false;
 			this.cameraShakeOffset = new Phaser.Point(0, 0);
 
@@ -257,7 +256,6 @@ module Ld33.Level {
 		}
 
 		render() {
-			this.game.debug.text(this.game.time.fps.toString(), 2, 14, "#00ff00");
 		}
 
 		shutdown() {
