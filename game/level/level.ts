@@ -26,6 +26,7 @@ module Ld33.Level {
 		private rageTint : number;
 		private face : Phaser.Sprite;
 		private speedBar : Phaser.Sprite;
+		private rageBar : Phaser.Sprite;
 		private filter : Phaser.Sprite;
 		private filterTween : Phaser.Tween;
 		private road : Phaser.Sprite;
@@ -92,6 +93,13 @@ module Ld33.Level {
 			this.speedBar.tint = 0x00cf00;
 			this.speedBar.width = this.BAR_WIDTH;
 			this.speedBar.height = 0;
+
+			this.rageBar = this.game.add.sprite(this.BAR_WIDTH, this.game.height, 'blank');
+			this.rageBar.fixedToCamera = true;
+			this.rageBar.anchor.set(0, 1);
+			this.rageBar.tint = this.FILTER_COLOR_TO;
+			this.rageBar.width = this.BAR_WIDTH;
+			this.rageBar.height = 0;
 
 			this.filter = this.game.add.sprite(0, 0, 'filter');
 			this.filter.alpha = 0.5;
@@ -199,6 +207,8 @@ module Ld33.Level {
 		}
 
 		updateRage() {
+			this.rageBar.height = this.player.RageLevel * this.game.height;
+
 			var levelOfFour = Math.floor(4 * this.player.RageLevel);
 			var rageTint = Phaser.Color.interpolateColor(this.FILTER_COLOR_FROM, this.FILTER_COLOR_TO, 4, levelOfFour, 0);
 			if (this.rageTint != rageTint) {
