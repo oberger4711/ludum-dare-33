@@ -87,19 +87,19 @@ module Ld33.Level {
 			this.face.scale.set(this.FACE_EXTRA_SCALE + this.scaleFactor, this.FACE_EXTRA_SCALE + this.scaleFactor);
 			this.face.frame = 0;
 
-			this.speedBar = this.game.add.sprite(0, this.game.height, 'blank');
+			this.speedBar = this.game.add.sprite(0, this.game.height, 'speedbar');
 			this.speedBar.fixedToCamera = true;
 			this.speedBar.anchor.set(0, 1);
 			this.speedBar.tint = 0x00cf00;
 			this.speedBar.width = this.BAR_WIDTH;
-			this.speedBar.height = 0;
-
-			this.rageBar = this.game.add.sprite(this.BAR_WIDTH, this.game.height, 'blank');
+			this.speedBar.height = 1;
+			
+			this.rageBar = this.game.add.sprite(this.BAR_WIDTH, this.game.height, 'ragebar');
 			this.rageBar.fixedToCamera = true;
 			this.rageBar.anchor.set(0, 1);
 			this.rageBar.tint = this.FILTER_COLOR_TO;
 			this.rageBar.width = this.BAR_WIDTH;
-			this.rageBar.height = 0;
+			this.rageBar.height = 1;
 
 			this.filter = this.game.add.sprite(0, 0, 'filter');
 			this.filter.alpha = 0.5;
@@ -207,7 +207,7 @@ module Ld33.Level {
 		}
 
 		updateRage() {
-			this.rageBar.height = this.player.RageLevel * this.game.height;
+			this.rageBar.height = Math.max(1, this.player.RageLevel * this.game.height)
 
 			var levelOfFour = Math.floor(4 * this.player.RageLevel);
 			var rageTint = Phaser.Color.interpolateColor(this.FILTER_COLOR_FROM, this.FILTER_COLOR_TO, 4, levelOfFour, 0);
