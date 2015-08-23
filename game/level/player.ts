@@ -175,6 +175,9 @@ module Ld33.Level {
 			if (hitTop) {
 				// Knockback
 				this.body.velocity.y = this.KNOCKBACK_SPEED;
+				if (this.onKnockBack) {
+					this.onKnockBack();
+				}
 			}
 			var hitLeft = this.body.wasTouching.left != this.body.touching.left;
 			var hitRight = this.body.wasTouching.right != this.body.touching.right;

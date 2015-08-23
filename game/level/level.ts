@@ -24,6 +24,7 @@ module Ld33.Level {
 		private enemies : Phaser.Group;
 		private lasers : Phaser.Group;
 		private mapParser : MapParser;
+		private cameraShakeOffset : Phaser.Point;
 
 		private keyLeft : Phaser.Key;
 		private keyRight : Phaser.Key;
@@ -45,6 +46,7 @@ module Ld33.Level {
 		create() {
 			this.game.time.advancedTiming = true; // DEBUG
 			this.camera.roundPx = false;
+			this.cameraShakeOffset = new Phaser.Point(0, 0);
 			
 			this.road = this.game.add.sprite(this.game.width / 2, this.game.height / 2, 'road');
 			this.scaleFactor = this.ROAD_WIDTH / this.road.width;
@@ -63,6 +65,7 @@ module Ld33.Level {
 
 			this.player = new Player(this.game, this.mapParser.getMapHeight() - this.PLAYER_CAR_Y_OFFSET, this.lanesX, this.scaleFactor, this.lasers);
 			this.game.add.existing(this.player);
+			this.player.OnKnockBack = () => this.onPlayerKnockBack();
 			this.player.OnRageLevelChanged = () => this.updateRage();
 			this.player.OnDie = () => this.onPlayerDies();
 
@@ -90,7 +93,7 @@ module Ld33.Level {
 		update() {
 			this.game.physics.arcade.collide(this.player, this.enemies, (c) => this.player.hitCar(c));
 			this.game.physics.arcade.collide(this.lasers, this.enemies, (l, e) => this.laserHitsEnemy(l, e));
-			this.camera.focusOnXY(this.game.width / 2, this.player.position.y - (this.game.height / 2) + this.PLAYER_CAR_Y_OFFSET);
+			this.camera.focusOnXY(this.game.width / 2 + this.cameraShakeOffset.x, this.player.position.y - (this.game.height / 2) + this.PLAYER_CAR_Y_OFFSET + this.cameraShakeOffset.y);
 
 			this.road.y += this.ROAD_MIN_SCROLL_SPEED;
 			while (this.road.y - (this.road.height / 2) > this.camera.view.top) {
@@ -143,6 +146,19 @@ module Ld33.Level {
 			this.enemies.forEach((e) => {
 				e.body.moves = false;
 			}, this);
+		}
+
+		onPlayerKnockBack() {
+			var rumbleOffset = 10;
+			var properties = { x: rumbleOffset };
+			var duration = 50;
+			var repeat = 4;
+			var ease = Phaser.Easing.Bounce.InOut;
+			var autoStart = false;
+			var delay = 0;
+			var yoyo = true;
+			var quake : Phaser.Tween = this.game.add.tween(this.cameraShakeOffset).to(properties, duration, ease, autoStart, delay, 4, yoyo);
+			quake.start();
 		}
 
 		updateRage() {
