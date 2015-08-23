@@ -19,6 +19,7 @@ module Ld33.Level {
 		private scaleFactor : number = 1;
 		private lanesX : number[];
 
+		private random : Phaser.RandomDataGenerator;
 		private rageTint : number;
 		private face : Phaser.Sprite;
 		private filter : Phaser.Sprite;
@@ -51,6 +52,8 @@ module Ld33.Level {
 			this.game.time.advancedTiming = true; // DEBUG
 			this.camera.roundPx = false;
 			this.cameraShakeOffset = new Phaser.Point(0, 0);
+
+			this.random = new Phaser.RandomDataGenerator([1, 2, 3, 79]);
 			
 			this.road = this.game.add.sprite(this.game.width / 2, this.game.height / 2, 'road');
 			this.scaleFactor = this.ROAD_WIDTH / this.road.width;
@@ -178,6 +181,7 @@ module Ld33.Level {
 			expl.scale.set(this.EXPLOSION_EXTRA_SCALE + this.scaleFactor, this.EXPLOSION_EXTRA_SCALE + this.scaleFactor);
 			expl.anchor.set(0.5, 0.5);
 			expl.tint = this.rageTint;
+			expl.rotation = this.random.between(0, 360);
 			expl.animations.add('explode', [0, 1, 2], 6);
 			expl.animations.play('explode', undefined, undefined, true);
 		}
